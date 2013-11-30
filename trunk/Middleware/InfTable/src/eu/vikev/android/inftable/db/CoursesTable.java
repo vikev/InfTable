@@ -1,14 +1,9 @@
-package eu.vikev.android.inftable.entities.helpers;
+package eu.vikev.android.inftable.db;
 
-import android.content.Context;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+public class CoursesTable {
 
-public class CoursesHelper extends SQLiteOpenHelper {
+	public static final String TABLE_NAME = "courses";
 
-	public static final String TABLE_COURSES = "courses";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_EUCLID = "euclid";
 	public static final String COLUMN_ACRONYM = "acronym";
@@ -25,12 +20,14 @@ public class CoursesHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_LECTURER = "lecturer";
 	public static final String COLUMN_DELIVERYPERIOD = "deliveryperiod";
 
-	private static final String DATABASE_NAME = "inftable.db";
-	private static final int DATABASE_VERSION = 1;
+	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_EUCLID,
+			COLUMN_ACRONYM, COLUMN_NAME, COLUMN_URL, COLUMN_DRPS, COLUMN_AI,
+			COLUMN_CG, COLUMN_CS, COLUMN_SE, COLUMN_LEVEL, COLUMN_POINTS,
+			COLUMN_YEAR, COLUMN_LECTURER, COLUMN_DELIVERYPERIOD };
 
 	// Database creation sql statement
-	private static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
-			+ TABLE_COURSES + " (" + COLUMN_ID + " integer, " + COLUMN_EUCLID
+	protected static final String TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
+			+ TABLE_NAME + " (" + COLUMN_ID + " integer, " + COLUMN_EUCLID
 			+ " text, " + COLUMN_ACRONYM + " text NOT NULL, " + COLUMN_NAME
 			+ " text, " + COLUMN_URL + " text, " + COLUMN_DRPS + " text, "
 			+ COLUMN_AI + " integer DEFAULT NULL, " + COLUMN_CG
@@ -41,29 +38,5 @@ public class CoursesHelper extends SQLiteOpenHelper {
 			+ " integer DEFAULT NULL, " + COLUMN_LECTURER + " text, "
 			+ COLUMN_DELIVERYPERIOD + " text, PRIMARY KEY (" + COLUMN_ID
 			+ "), UNIQUE (" + COLUMN_ACRONYM + "));";
-
-	public CoursesHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-	}
-
-	@Override
-	public void onCreate(SQLiteDatabase database) {
-		try {
-			database.execSQL(DATABASE_CREATE);
-			Log.i(CoursesHelper.class.getName(), "Courses table created.");
-		} catch (SQLException e) {
-			Log.e(CoursesHelper.class.getName(),
-					"Couldn't create table courses. Exception: ", e);
-		}
-	}
-
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.w(CoursesHelper.class.getName(), "Upgrading database from version "
-				+ oldVersion + " to " + newVersion
-				+ ", which will destroy all old data");
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_COURSES);
-		onCreate(db);
-	}
 
 }

@@ -1,40 +1,32 @@
-package eu.vikev.android.inftable.entities.dao;
+package eu.vikev.android.inftable.db.entities.dao;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.vikev.android.inftable.entities.Course;
-import eu.vikev.android.inftable.entities.helpers.CoursesHelper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import eu.vikev.android.inftable.db.CoursesTable;
+import eu.vikev.android.inftable.db.DBHelper;
+import eu.vikev.android.inftable.db.entities.Course;
 
 public class CourseDao {
 	private SQLiteDatabase database;
-	private CoursesHelper coursesHelper;
-
-	private String[] allColumns = { CoursesHelper.COLUMN_ID,
-			CoursesHelper.COLUMN_EUCLID, CoursesHelper.COLUMN_ACRONYM,
-			CoursesHelper.COLUMN_NAME, CoursesHelper.COLUMN_URL,
-			CoursesHelper.COLUMN_DRPS, CoursesHelper.COLUMN_AI,
-			CoursesHelper.COLUMN_CG, CoursesHelper.COLUMN_CS,
-			CoursesHelper.COLUMN_SE, CoursesHelper.COLUMN_LEVEL,
-			CoursesHelper.COLUMN_POINTS, CoursesHelper.COLUMN_YEAR,
-			CoursesHelper.COLUMN_LECTURER, CoursesHelper.COLUMN_DELIVERYPERIOD };
+	private DBHelper dbHelper;
 
 	public CourseDao(Context context) {
-		coursesHelper = new CoursesHelper(context);
+		dbHelper = new DBHelper(context);
 	}
 
 	public void open() throws SQLException {
-		database = coursesHelper.getWritableDatabase();
+		database = dbHelper.getWritableDatabase();
 	}
 
 	public void close() {
-		coursesHelper.close();
+		dbHelper.close();
 	}
 
 	/**
@@ -77,25 +69,26 @@ public class CourseDao {
 			String deliveryPeriod) {
 
 		ContentValues values = new ContentValues();
-		values.put(CoursesHelper.COLUMN_EUCLID, euclid);
-		values.put(CoursesHelper.COLUMN_ACRONYM, acronym);
-		values.put(CoursesHelper.COLUMN_NAME, name);
-		values.put(CoursesHelper.COLUMN_URL, url);
-		values.put(CoursesHelper.COLUMN_DRPS, drps);
-		values.put(CoursesHelper.COLUMN_AI, ai);
-		values.put(CoursesHelper.COLUMN_CG, cg);
-		values.put(CoursesHelper.COLUMN_CS, cs);
-		values.put(CoursesHelper.COLUMN_SE, se);
-		values.put(CoursesHelper.COLUMN_LEVEL, level);
-		values.put(CoursesHelper.COLUMN_DELIVERYPERIOD, deliveryPeriod);
-		values.put(CoursesHelper.COLUMN_POINTS, points);
-		values.put(CoursesHelper.COLUMN_YEAR, lecturer);
+		values.put(CoursesTable.COLUMN_EUCLID, euclid);
+		values.put(CoursesTable.COLUMN_ACRONYM, acronym);
+		values.put(CoursesTable.COLUMN_NAME, name);
+		values.put(CoursesTable.COLUMN_URL, url);
+		values.put(CoursesTable.COLUMN_DRPS, drps);
+		values.put(CoursesTable.COLUMN_AI, ai);
+		values.put(CoursesTable.COLUMN_CG, cg);
+		values.put(CoursesTable.COLUMN_CS, cs);
+		values.put(CoursesTable.COLUMN_SE, se);
+		values.put(CoursesTable.COLUMN_LEVEL, level);
+		values.put(CoursesTable.COLUMN_DELIVERYPERIOD, deliveryPeriod);
+		values.put(CoursesTable.COLUMN_POINTS, points);
+		values.put(CoursesTable.COLUMN_YEAR, lecturer);
 
-		long insertId = database.insert(CoursesHelper.TABLE_COURSES, null,
+		long insertId = database.insert(CoursesTable.TABLE_NAME, null,
 				values);
 
-		Cursor cursor = database.query(CoursesHelper.TABLE_COURSES, allColumns,
-				CoursesHelper.COLUMN_ID + " = " + insertId, null, null, null,
+		Cursor cursor = database.query(CoursesTable.TABLE_NAME,
+				CoursesTable.ALL_COLUMNS,
+				CoursesTable.COLUMN_ID + " = " + insertId, null, null, null,
 				null);
 
 		cursor.moveToFirst();
@@ -114,7 +107,8 @@ public class CourseDao {
 		Log.i(CourseDao.class.getName(), "Deleting course...");
 		long id = course.getId();
 		System.out.println("Comment deleted with id: " + id);
-		database.delete(CoursesHelper.TABLE_COURSES, CoursesHelper.COLUMN_ID
+		database.delete(CoursesTable.TABLE_NAME,
+				CoursesTable.COLUMN_ID
 				+ " = " + id, null);
 	}
 
@@ -124,7 +118,8 @@ public class CourseDao {
 	public List<Course> getAllCourses() {
 		List<Course> courses = new ArrayList<Course>();
 
-		Cursor cursor = database.query(CoursesHelper.TABLE_COURSES, allColumns,
+		Cursor cursor = database.query(CoursesTable.TABLE_NAME,
+				CoursesTable.ALL_COLUMNS,
 				null, null, null, null, null);
 
 		cursor.moveToFirst();
@@ -137,6 +132,33 @@ public class CourseDao {
 
 		cursor.close();
 		return courses;
+	}
+
+	public Course getCourseById(long id) {
+
+		Cursor cursor = database.query(CoursesTable.TABLE_NAME,
+				CoursesTable.ALL_COLUMNS,
+				CoursesTable.COLUMN_ID + "=" + id, null, null, null, null);
+
+		cursor.moveToFirst();
+		Course course = cursorToCourse(cursor);
+		cursor.close();
+
+		return course;
+	}
+
+	public Course getCourseByAcronym(String acronym) {
+
+		Cursor cursor = database.query(CoursesTable.TABLE_NAME,
+				CoursesTable.ALL_COLUMNS,
+				CoursesTable.COLUMN_ACRONYM + "=" + acronym, null, null, null,
+				null);
+
+		cursor.moveToFirst();
+		Course course = cursorToCourse(cursor);
+		cursor.close();
+
+		return course;
 	}
 
 	/** Turn a cursor to a Course entity */

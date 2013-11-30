@@ -1,4 +1,4 @@
-package eu.vikev.android.inftable.entities;
+package eu.vikev.android.inftable.db.entities;
 
 public class Course {
 	private long id;

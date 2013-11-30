@@ -4,5 +4,15 @@
     <string name="app_name">InfTable</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="update_world">Update world!</string>
+    <string name="label_path_to_courses">Please enter the path to courses.xml</string>
+    <string name="link_courses_xml">http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml</string>
+    <string name="label_path_to_venues">Please enter the path to venues.xml</string>
+    <string name="link_venues_xml">http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml</string>
+    <string name="label_path_to_timetable">Please enter the path to timetable.xml</string>
+    <string name="link_timetable_xml">http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml</string>
+    <string name="btn_cancle">Cancle</string>
+    <string name="btn_download">Download</string>
+    <string name="label_update_title">Update courses and timetable information</string>
 
 </resources>
