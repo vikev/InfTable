@@ -81,7 +81,8 @@ public class CourseDao {
 		values.put(CoursesTable.COLUMN_LEVEL, level);
 		values.put(CoursesTable.COLUMN_DELIVERYPERIOD, deliveryPeriod);
 		values.put(CoursesTable.COLUMN_POINTS, points);
-		values.put(CoursesTable.COLUMN_YEAR, lecturer);
+		values.put(CoursesTable.COLUMN_YEAR, year);
+		values.put(CoursesTable.COLUMN_LECTURER, lecturer);
 
 		long insertId = database.insert(CoursesTable.TABLE_NAME, null,
 				values);
