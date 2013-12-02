@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import eu.vikev.android.inftable.R;
-import eu.vikev.android.inftable.xmlparsers.VenuesParser;
+import eu.vikev.android.inftable.xmlparsers.XmlParser;
 
 public class UpdateActivity extends Activity {
 
@@ -15,8 +15,10 @@ public class UpdateActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		new VenuesParser(this)
-				.execute("http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml");
+		new XmlParser(this)
+				.execute(
+						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml",
+						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml");
 
 		setContentView(R.layout.activity_update);
 
