@@ -1,5 +1,6 @@
 package eu.vikev.android.inftable.xmlparsers;
 
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,6 +14,7 @@ import org.xml.sax.InputSource;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import eu.vikev.android.inftable.R;
 import eu.vikev.android.inftable.db.entities.Building;
 import eu.vikev.android.inftable.db.entities.Course;
 import eu.vikev.android.inftable.db.entities.Room;
@@ -25,8 +27,10 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 	private CourseDao courseDao;
 	private BuildingDao buildingDao;
 	private RoomDao roomDao;
+	private Context context;
 
 	public XmlParser(Context context) {
+		this.context = context;
 		courseDao = new CourseDao(context);
 		buildingDao = new BuildingDao(context);
 		roomDao = new RoomDao(context);
@@ -45,7 +49,13 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			URL url = new URL(path);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(new InputSource(url.openStream()));
+			InputStream stream = url.openStream();
+			if (!validateAgainstXSD(stream, context.getResources()
+					.openRawResource(R.raw.venues))) {
+				Exception up = new Exception("Wrong structure - venues.xml");
+				throw up;
+			}
+			Document doc = db.parse(new InputSource(stream));
 			doc.getDocumentElement().normalize();
 
 			NodeList buildingsList = doc.getElementsByTagName("building");
@@ -102,7 +112,7 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			Log.i(XmlParser.class.getName(), "Getting rooms done.");
 
 		} catch (Exception e) {
-			Log.e(XmlParser.class.getName(), "Getting buildings error: " + e);
+			Log.e(XmlParser.class.getName(), "Getting venues error: " + e);
 			buildingDao.close();
 			roomDao.close();
 		}
@@ -176,5 +186,9 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			Log.e(XmlParser.class.getName(), "Getting courses error: " + e);
 			courseDao.close();
 		}
+	}
+
+	private boolean validateAgainstXSD(InputStream xml, InputStream xsd) {
+		return true;
 	}
 }
