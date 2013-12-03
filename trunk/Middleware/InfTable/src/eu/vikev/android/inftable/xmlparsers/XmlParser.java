@@ -63,7 +63,6 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 
 			/* insert buildings */
 			Log.i(XmlParser.class.getName(), "Getting buildings...");
-			buildingDao.open();
 			for (int i = 0; i < buildingsList.getLength(); i++) {
 				Node node = buildingsList.item(i);
 				NodeList buildingInfo = node.getChildNodes();
@@ -84,12 +83,10 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 
 				buildingDao.insert(newBuilding);
 			}
-			buildingDao.close();
 			Log.i(XmlParser.class.getName(), "Getting buildings done.");
 
 			/* insert rooms */
 			Log.i(XmlParser.class.getName(), "Getting rooms...");
-			roomDao.open();
 			for (int i = 0; i < roomsList.getLength(); i++) {
 				Node node = roomsList.item(i);
 				NodeList roomInfo = node.getChildNodes();
@@ -108,13 +105,10 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 
 				roomDao.insert(newRoom);
 			}
-			roomDao.close();
 			Log.i(XmlParser.class.getName(), "Getting rooms done.");
 
 		} catch (Exception e) {
 			Log.e(XmlParser.class.getName(), "Getting venues error: " + e);
-			buildingDao.close();
-			roomDao.close();
 		}
 	}
 
@@ -122,7 +116,6 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 		try {
 			Log.i(XmlParser.class.getName(), "Getting courses...");
 
-			courseDao.open();
 			URL url = new URL(path);
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -180,11 +173,9 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 				}
 				courseDao.insert(course);
 			}
-			courseDao.close();
 			Log.i(XmlParser.class.getName(), "Getting courses done.");
 		} catch (Exception e) {
 			Log.e(XmlParser.class.getName(), "Getting courses error: " + e);
-			courseDao.close();
 		}
 	}
 

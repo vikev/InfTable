@@ -21,34 +21,40 @@ public class RoomDao {
 		dbHelper = new DBHelper(context);
 	}
 
-	public void open() throws SQLException {
+	private void open() throws SQLException {
 		database = dbHelper.getWritableDatabase();
 	}
 
-	public void close() {
+	private void close() {
 		dbHelper.close();
 	}
 
-	public Room insert(String name, String description) {
+	public Room insert(String name, String description) throws SQLException {
+		try {
+			this.open();
+			ContentValues values = new ContentValues();
+			values.put(RoomsTable.COLUMN_NAME, name);
+			values.put(RoomsTable.COLUMN_DESCRIPTION, description);
 
-		ContentValues values = new ContentValues();
-		values.put(RoomsTable.COLUMN_NAME, name);
-		values.put(RoomsTable.COLUMN_DESCRIPTION, description);
+			long insertId = database
+					.insert(RoomsTable.TABLE_NAME, null, values);
 
-		long insertId = database.insert(RoomsTable.TABLE_NAME, null, values);
+			Cursor cursor = database.query(RoomsTable.TABLE_NAME,
+					RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_ID + " = "
+							+ insertId, null, null, null, null);
 
-		Cursor cursor = database
-				.query(RoomsTable.TABLE_NAME, RoomsTable.ALL_COLUMNS,
-						RoomsTable.COLUMN_ID + " = " + insertId, null, null,
-						null, null);
-
-		cursor.moveToFirst();
-		Room newRoom = cursorToRoom(cursor);
-		cursor.close();
-		return newRoom;
+			cursor.moveToFirst();
+			Room newRoom = cursorToRoom(cursor);
+			cursor.close();
+			this.close();
+			return newRoom;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
-	public void insert(Room room) {
+	public void insert(Room room) throws SQLException {
 		room = this.insert(room.getName(), room.getDescription());
 	}
 
@@ -58,59 +64,84 @@ public class RoomDao {
 	 * @param room
 	 *            room instance.
 	 */
-	public void delete(Room room) {
+	public void delete(Room room) throws SQLException {
 		Log.i(RoomDao.class.getName(), "Deleting room...");
-		long id = room.getId();
+		try {
+			this.open();
+			long id = room.getId();
 
-		database.delete(RoomsTable.TABLE_NAME, RoomsTable.COLUMN_ID + " = "
-				+ id, null);
+			database.delete(RoomsTable.TABLE_NAME, RoomsTable.COLUMN_ID + " = "
+					+ id, null);
+			this.close();
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
 	/**
 	 * @return All rooms.
 	 */
-	public List<Room> getAllRooms() {
-		List<Room> rooms = new ArrayList<Room>();
+	public List<Room> getAllRooms() throws SQLException {
+		try {
+			this.open();
+			List<Room> rooms = new ArrayList<Room>();
 
-		Cursor cursor = database.query(RoomsTable.TABLE_NAME,
-				RoomsTable.ALL_COLUMNS, null, null, null, null, null);
+			Cursor cursor = database.query(RoomsTable.TABLE_NAME,
+					RoomsTable.ALL_COLUMNS, null, null, null, null, null);
 
-		cursor.moveToFirst();
+			cursor.moveToFirst();
 
-		while (!cursor.isAfterLast()) {
-			Room room = cursorToRoom(cursor);
-			rooms.add(room);
-			cursor.moveToNext();
+			while (!cursor.isAfterLast()) {
+				Room room = cursorToRoom(cursor);
+				rooms.add(room);
+				cursor.moveToNext();
+			}
+
+			cursor.close();
+			this.close();
+			return rooms;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
 		}
-
-		cursor.close();
-		return rooms;
 	}
 
-	public Room getRoomById(long id) {
+	public Room getRoomById(long id) throws SQLException {
+		try {
+			this.open();
+			Cursor cursor = database.query(RoomsTable.TABLE_NAME,
+					RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_ID + "=" + id,
+					null, null, null, null);
 
-		Cursor cursor = database.query(RoomsTable.TABLE_NAME,
-				RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_ID + "=" + id, null,
-				null, null, null);
-
-		cursor.moveToFirst();
-		Room room = cursorToRoom(cursor);
-		cursor.close();
-
-		return room;
+			cursor.moveToFirst();
+			Room room = cursorToRoom(cursor);
+			cursor.close();
+			this.close();
+			return room;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
-	public Room getRoomByName(String name) {
+	public Room getRoomByName(String name) throws SQLException {
+		try {
+			this.open();
+			Cursor cursor = database
+					.query(RoomsTable.TABLE_NAME, RoomsTable.ALL_COLUMNS,
+							RoomsTable.COLUMN_NAME + "=" + name, null, null,
+							null, null);
 
-		Cursor cursor = database.query(RoomsTable.TABLE_NAME,
-				RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_NAME + "=" + name,
-				null, null, null, null);
-
-		cursor.moveToFirst();
-		Room room = cursorToRoom(cursor);
-		cursor.close();
-
-		return room;
+			cursor.moveToFirst();
+			Room room = cursorToRoom(cursor);
+			cursor.close();
+			this.close();
+			return room;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
 	/** Turn a cursor to a Room entity */

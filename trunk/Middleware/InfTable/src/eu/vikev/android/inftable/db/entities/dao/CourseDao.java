@@ -21,11 +21,11 @@ public class CourseDao {
 		dbHelper = new DBHelper(context);
 	}
 
-	public void open() throws SQLException {
+	private void open() throws SQLException {
 		database = dbHelper.getWritableDatabase();
 	}
 
-	public void close() {
+	private void close() {
 		dbHelper.close();
 	}
 
@@ -64,38 +64,43 @@ public class CourseDao {
 	 * @return The course with assigned id.
 	 */
 	public Course insert(String euclid, String acronym, String name,
-			String url, String drps, int ai, int cg, int cs,
-			int se, int level, int points, int year, String lecturer,
-			String deliveryPeriod) {
+			String url, String drps, int ai, int cg, int cs, int se, int level,
+			int points, int year, String lecturer, String deliveryPeriod)
+			throws SQLException {
+		try {
+			this.open();
+			ContentValues values = new ContentValues();
+			values.put(CoursesTable.COLUMN_EUCLID, euclid);
+			values.put(CoursesTable.COLUMN_ACRONYM, acronym);
+			values.put(CoursesTable.COLUMN_NAME, name);
+			values.put(CoursesTable.COLUMN_URL, url);
+			values.put(CoursesTable.COLUMN_DRPS, drps);
+			values.put(CoursesTable.COLUMN_AI, ai);
+			values.put(CoursesTable.COLUMN_CG, cg);
+			values.put(CoursesTable.COLUMN_CS, cs);
+			values.put(CoursesTable.COLUMN_SE, se);
+			values.put(CoursesTable.COLUMN_LEVEL, level);
+			values.put(CoursesTable.COLUMN_DELIVERYPERIOD, deliveryPeriod);
+			values.put(CoursesTable.COLUMN_POINTS, points);
+			values.put(CoursesTable.COLUMN_YEAR, year);
+			values.put(CoursesTable.COLUMN_LECTURER, lecturer);
 
-		ContentValues values = new ContentValues();
-		values.put(CoursesTable.COLUMN_EUCLID, euclid);
-		values.put(CoursesTable.COLUMN_ACRONYM, acronym);
-		values.put(CoursesTable.COLUMN_NAME, name);
-		values.put(CoursesTable.COLUMN_URL, url);
-		values.put(CoursesTable.COLUMN_DRPS, drps);
-		values.put(CoursesTable.COLUMN_AI, ai);
-		values.put(CoursesTable.COLUMN_CG, cg);
-		values.put(CoursesTable.COLUMN_CS, cs);
-		values.put(CoursesTable.COLUMN_SE, se);
-		values.put(CoursesTable.COLUMN_LEVEL, level);
-		values.put(CoursesTable.COLUMN_DELIVERYPERIOD, deliveryPeriod);
-		values.put(CoursesTable.COLUMN_POINTS, points);
-		values.put(CoursesTable.COLUMN_YEAR, year);
-		values.put(CoursesTable.COLUMN_LECTURER, lecturer);
+			long insertId = database.insert(CoursesTable.TABLE_NAME, null,
+					values);
 
-		long insertId = database.insert(CoursesTable.TABLE_NAME, null,
-				values);
+			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
+					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ID + " = "
+							+ insertId, null, null, null, null);
 
-		Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-				CoursesTable.ALL_COLUMNS,
-				CoursesTable.COLUMN_ID + " = " + insertId, null, null, null,
-				null);
-
-		cursor.moveToFirst();
-		Course newCourse = cursorToCourse(cursor);
-		cursor.close();
-		return newCourse;
+			cursor.moveToFirst();
+			Course newCourse = cursorToCourse(cursor);
+			cursor.close();
+			close();
+			return newCourse;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
 	/**
@@ -104,62 +109,82 @@ public class CourseDao {
 	 * @param course
 	 *            course instance.
 	 */
-	public void delete(Course course) {
+	public void delete(Course course) throws SQLException {
 		Log.i(CourseDao.class.getName(), "Deleting course...");
-		long id = course.getId();
-		System.out.println("Comment deleted with id: " + id);
-		database.delete(CoursesTable.TABLE_NAME,
-				CoursesTable.COLUMN_ID
-				+ " = " + id, null);
+		try {
+			this.open();
+			long id = course.getId();
+			database.delete(CoursesTable.TABLE_NAME, CoursesTable.COLUMN_ID
+					+ " = " + id, null);
+			this.close();
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
 	/**
 	 * @return All courses.
 	 */
-	public List<Course> getAllCourses() {
-		List<Course> courses = new ArrayList<Course>();
+	public List<Course> getAllCourses() throws SQLException {
+		try {
+			this.open();
+			List<Course> courses = new ArrayList<Course>();
 
-		Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-				CoursesTable.ALL_COLUMNS,
-				null, null, null, null, null);
+			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
+					CoursesTable.ALL_COLUMNS, null, null, null, null, null);
 
-		cursor.moveToFirst();
+			cursor.moveToFirst();
 
-		while (!cursor.isAfterLast()) {
-			Course course = cursorToCourse(cursor);
-			courses.add(course);
-			cursor.moveToNext();
+			while (!cursor.isAfterLast()) {
+				Course course = cursorToCourse(cursor);
+				courses.add(course);
+				cursor.moveToNext();
+			}
+
+			cursor.close();
+			close();
+			return courses;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
 		}
-
-		cursor.close();
-		return courses;
 	}
 
-	public Course getCourseById(long id) {
+	public Course getCourseById(long id) throws SQLException {
+		try {
+			this.open();
+			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
+					CoursesTable.ALL_COLUMNS,
+					CoursesTable.COLUMN_ID + "=" + id, null, null, null, null);
 
-		Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-				CoursesTable.ALL_COLUMNS,
-				CoursesTable.COLUMN_ID + "=" + id, null, null, null, null);
-
-		cursor.moveToFirst();
-		Course course = cursorToCourse(cursor);
-		cursor.close();
-
-		return course;
+			cursor.moveToFirst();
+			Course course = cursorToCourse(cursor);
+			cursor.close();
+			this.close();
+			return course;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
-	public Course getCourseByAcronym(String acronym) {
+	public Course getCourseByAcronym(String acronym) throws SQLException {
+		try {
+			this.open();
+			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
+					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ACRONYM + "="
+							+ acronym, null, null, null, null);
 
-		Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-				CoursesTable.ALL_COLUMNS,
-				CoursesTable.COLUMN_ACRONYM + "=" + acronym, null, null, null,
-				null);
-
-		cursor.moveToFirst();
-		Course course = cursorToCourse(cursor);
-		cursor.close();
-
-		return course;
+			cursor.moveToFirst();
+			Course course = cursorToCourse(cursor);
+			cursor.close();
+			this.close();
+			return course;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
 	/** Turn a cursor to a Course entity */
@@ -185,13 +210,20 @@ public class CourseDao {
 		return course;
 	}
 
-	public void insert(Course course) {
-		this.insert(course.getEuclid(), course.getAcronym(), course.getName(),
-				course.getUrl(), course.getDrps(), course.getAi(),
-				course.getCg(), course.getCs(), course.getSe(),
-				course.getLevel(), course.getPoints(), course.getYear(),
-				course.getLecturer(), course.getDeliveryPeriod());
-
+	public void insert(Course course) throws SQLException {
+		try {
+			this.open();
+			this.insert(course.getEuclid(), course.getAcronym(),
+					course.getName(), course.getUrl(), course.getDrps(),
+					course.getAi(), course.getCg(), course.getCs(),
+					course.getSe(), course.getLevel(), course.getPoints(),
+					course.getYear(), course.getLecturer(),
+					course.getDeliveryPeriod());
+			this.close();
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
 }

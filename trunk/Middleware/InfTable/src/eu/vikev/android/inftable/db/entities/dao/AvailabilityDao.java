@@ -20,61 +20,77 @@ public class AvailabilityDao {
 		dbHelper = new DBHelper(context);
 	}
 
-	public void open() throws SQLException {
+	private void open() throws SQLException {
 		database = dbHelper.getWritableDatabase();
 	}
 
-	public void close() {
+	private void close() {
 		dbHelper.close();
 	}
 
-	public Availability insert(String courseAcronym, int year) {
+	public Availability insert(String courseAcronym, int year)
+			throws SQLException {
+		try {
+			ContentValues values = new ContentValues();
+			values.put(AvailabilitiesTable.COLUMN_COURSE, courseAcronym);
+			values.put(AvailabilitiesTable.COLUMN_YEAR, year);
+			open();
+			long insertId = database.insert(AvailabilitiesTable.TABLE_NAME,
+					null, values);
 
-		ContentValues values = new ContentValues();
-		values.put(AvailabilitiesTable.COLUMN_COURSE, courseAcronym);
-		values.put(AvailabilitiesTable.COLUMN_YEAR, year);
+			Cursor cursor = database.query(AvailabilitiesTable.TABLE_NAME,
+					AvailabilitiesTable.ALL_COLUMNS,
+					AvailabilitiesTable.COLUMN_ID + " = " + insertId, null,
+					null, null, null);
 
-		long insertId = database.insert(AvailabilitiesTable.TABLE_NAME, null,
-				values);
-
-		Cursor cursor = database.query(AvailabilitiesTable.TABLE_NAME,
-				AvailabilitiesTable.ALL_COLUMNS, AvailabilitiesTable.COLUMN_ID
-						+ " = " + insertId, null, null, null, null);
-
-		cursor.moveToFirst();
-		Availability newAvailability = cursorToRoom(cursor);
-		cursor.close();
-		return newAvailability;
+			cursor.moveToFirst();
+			Availability newAvailability = cursorToRoom(cursor);
+			cursor.close();
+			close();
+			return newAvailability;
+		} catch (SQLException e) {
+			close();
+			throw e;
+		}
 	}
 
-	public Availability insert(Course course, int year) {
+	public Availability insert(Course course, int year) throws SQLException {
 		return this.insert(course.getAcronym(), year);
 	}
 
-	public Availability getAvailabilityById(long id) {
+	public void insert(Availability availability) throws SQLException {
+		availability = insert(availability.getCourse().getAcronym(),
+				availability.getYear());
+	}
 
-		Cursor cursor = database.query(AvailabilitiesTable.TABLE_NAME,
-				AvailabilitiesTable.ALL_COLUMNS, AvailabilitiesTable.COLUMN_ID
-						+ "=" + id, null, null, null, null);
+	public Availability getAvailabilityById(long id) throws SQLException {
+		try {
+			open();
+			Cursor cursor = database.query(AvailabilitiesTable.TABLE_NAME,
+					AvailabilitiesTable.ALL_COLUMNS,
+					AvailabilitiesTable.COLUMN_ID + "=" + id, null, null, null,
+					null);
 
-		cursor.moveToFirst();
-		Availability availability = cursorToRoom(cursor);
-		cursor.close();
-
-		return availability;
+			cursor.moveToFirst();
+			Availability availability = cursorToRoom(cursor);
+			cursor.close();
+			close();
+			return availability;
+		} catch (SQLException e) {
+			close();
+			throw e;
+		}
 	}
 
 	/** Turn a cursor to a Room entity */
 	private Availability cursorToRoom(Cursor cursor) {
 		CourseDao courseDao = new CourseDao(context);
-		courseDao.open();
 		Availability availability = new Availability();
 
 		availability.setId(cursor.getLong(0));
 		availability
 				.setCourse(courseDao.getCourseByAcronym(cursor.getString(1)));
 		availability.setYear(cursor.getInt((2)));
-		courseDao.close();
 		return availability;
 	}
 }
