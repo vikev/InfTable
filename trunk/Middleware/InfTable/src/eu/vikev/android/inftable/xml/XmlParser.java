@@ -1,4 +1,4 @@
-package eu.vikev.android.inftable.xmlparsers;
+package eu.vikev.android.inftable.xml;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -37,12 +37,12 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 	}
 
 	protected Boolean doInBackground(String... urls) {
-		getBuildings(urls[0]);
+		getVenues(urls[0]);
 		getCourses(urls[1]);
 		return true;
 	}
 
-	private void getBuildings(String path) {
+	private void getVenues(String path) {
 		try {
 			Log.i(XmlParser.class.getName(), "Getting venues...");
 
@@ -50,13 +50,17 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			InputStream stream = url.openStream();
-			if (!validateAgainstXSD(stream, context.getResources()
-					.openRawResource(R.raw.venues))) {
-				Exception up = new Exception("Wrong structure - venues.xml");
-				throw up;
-			}
+
 			Document doc = db.parse(new InputSource(stream));
 			doc.getDocumentElement().normalize();
+
+			Log.i(XmlParser.class.getName(), "Checking venues.xml validity...");
+			if (!XSDValidator.isXmlValid(doc, context.getResources()
+					.openRawResource(R.raw.venuesxsd))) {
+				Exception e = new Exception("Invalid venues.xml structure!");
+				throw e;
+			}
+			Log.i(XmlParser.class.getName(), "venues.xml valid!");
 
 			NodeList buildingsList = doc.getElementsByTagName("building");
 			NodeList roomsList = doc.getElementsByTagName("room");

@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import eu.vikev.android.inftable.R;
-import eu.vikev.android.inftable.xmlparsers.XmlParser;
+import eu.vikev.android.inftable.xml.XmlParser;
 
 public class UpdateActivity extends Activity {
 
