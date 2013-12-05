@@ -11,6 +11,15 @@ public class TimetableEntry {
 	private Time end;
 	private Building building;
 	private Room room;
+	private String comment;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Course getCourse() {
 		return course;
@@ -68,20 +77,21 @@ public class TimetableEntry {
 		this.room = room;
 	}
 
-	public Long getId() {
-		return id;
+	public String getComment() {
+		return comment;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	@Override
 	public String toString() {
 		return "TimetableEntry [id=" + id + ", course=" + course
 				+ ", semester=" + semester + ", day=" + day + ", start="
-				+ start + ", end=" + end + ", building=" + building + ", room="
-				+ room + "]";
+				+ start.toString() + ", end=" + end.toString() + ", building="
+				+ building + ", room="
+				+ room + ", comment=" + comment + "]";
 	}
 
 }

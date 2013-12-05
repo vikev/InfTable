@@ -1,5 +1,6 @@
 package eu.vikev.android.inftable.xml;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -7,6 +8,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -39,9 +42,16 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 	protected Boolean doInBackground(String... urls) {
 		getVenues(urls[0]);
 		getCourses(urls[1]);
+		getTimetable(urls[2]);
 		return true;
 	}
 
+	/**
+	 * Downloads venues.xml, parses it and populates the database.
+	 * 
+	 * @param path
+	 *            URL to venues.xml
+	 */
 	private void getVenues(String path) {
 		try {
 			Log.i(XmlParser.class.getName(), "Getting venues...");
@@ -116,6 +126,12 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 		}
 	}
 
+	/**
+	 * Downloads courses.xml, parses it and populates the database.
+	 * 
+	 * @param path
+	 *            URL to courses.xml
+	 */
 	private void getCourses(String path) {
 		try {
 			Log.i(XmlParser.class.getName(), "Getting courses...");
@@ -126,6 +142,14 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new InputSource(url.openStream()));
 			doc.getDocumentElement().normalize();
+
+			Log.i(XmlParser.class.getName(), "Checking courses.xml validity...");
+			if (!XSDValidator.isXmlValid(doc, context.getResources()
+					.openRawResource(R.raw.coursesxsd))) {
+				Exception e = new Exception("Invalid courses.xml structure!");
+				throw e;
+			}
+			Log.i(XmlParser.class.getName(), "courses.xml valid!");
 
 			NodeList coursesList = doc.getElementsByTagName("course");
 
@@ -183,7 +207,70 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 		}
 	}
 
-	private boolean validateAgainstXSD(InputStream xml, InputStream xsd) {
-		return true;
+	/**
+	 * Downloads timetable.xml, parses it and populates the database.
+	 * 
+	 * @param path
+	 *            URL to timetable.xml
+	 */
+	private void getTimetable(String path) {
+		try {
+			Log.i(XmlParser.class.getName(), "Getting timetable...");
+
+			URL url = new URL(path);
+
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(url.openStream()));
+			doc.getDocumentElement().normalize();
+
+			Log.i(XmlParser.class.getName(),
+					"Checking timetable.xml validity...");
+			if (!XSDValidator.isXmlValid(doc, context.getResources()
+					.openRawResource(R.raw.timetablexsd))) {
+				Exception e = new Exception("Invalid timetable.xml structure!");
+				throw e;
+			}
+			Log.i(XmlParser.class.getName(), "timetable.xml valid!");
+
+			NodeList timetableList = doc.getElementsByTagName("lecture");
+
+			for (int i = 0; i < timetableList.getLength(); i++) {
+				Element lecture = (Element) timetableList.item(i);
+				Node time = lecture.getParentNode();
+				Node day = time.getParentNode();
+				Node semester = day.getParentNode().getParentNode();
+
+
+				/* Get start and finish. */
+				NamedNodeMap timeAttributes = time.getAttributes();
+				String start = timeAttributes.getNamedItem("start")
+						.getTextContent();
+
+				String finish = timeAttributes.getNamedItem("finish")
+						.getTextContent();
+
+				/* Get semester number */
+				String semesterNum = semester.getAttributes()
+						.getNamedItem("number").getTextContent();
+
+				/* Get course acronym */
+				String acronym = lecture.getElementsByTagName("course").item(0)
+						.getTextContent();
+
+
+			}
+
+		} catch (IOException e) {
+			Log.e(XmlParser.class.getName(),
+					"Couldn't download timetable.xml. No connection or wrong URL. "
+							+ e);
+		} catch (NullPointerException e) {
+			Log.e(XmlParser.class.getName(), "Parsing timetable.xml error: "
+					+ e);
+		} catch (Exception e) {
+			Log.e(XmlParser.class.getName(), "Getting timetable error: " + e);
+		}
 	}
+
 }

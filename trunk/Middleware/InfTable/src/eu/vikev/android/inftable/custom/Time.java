@@ -9,13 +9,20 @@ public class Time {
 		this.minutes = minutes;
 	}
 
+	public Time(String t) {
+		t.replace(":", "");
+		int time = Integer.parseInt(t);
+		hour = time / 100;
+		minutes = time % 100;
+	}
+
 	public int toInt() {
 		return hour * 100 + minutes;
 	}
 
 	@Override
 	public String toString() {
-		return hour + ":" + minutes;
+		return String.format("%d:%02d", hour, minutes);
 	}
 
 }

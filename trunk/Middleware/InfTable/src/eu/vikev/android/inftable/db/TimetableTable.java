@@ -11,10 +11,11 @@ public class TimetableTable {
 	public static final String COLUMN_FINISH = "finish";
 	public static final String COLUMN_BUILDING = "building";
 	public static final String COLUMN_ROOM = "room";
+	public static final String COLUMN_COMMENT = "comment";
 
 	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_COURSE,
 			COLUMN_SEMESTER, COLUMN_DAY, COLUMN_START, COLUMN_FINISH,
-			COLUMN_BUILDING, COLUMN_ROOM };
+			COLUMN_BUILDING, COLUMN_ROOM, COLUMN_COMMENT };
 
 	// Database creation sql statement
 	protected static final String TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
@@ -26,5 +27,6 @@ public class TimetableTable {
 			+ COLUMN_BUILDING + " text REFERENCES " + BuildingsTable.TABLE_NAME
 			+ "(" + BuildingsTable.COLUMN_NAME + "), " + COLUMN_ROOM
 			+ " text REFERENCES " + RoomsTable.TABLE_NAME + "("
-			+ RoomsTable.COLUMN_NAME + "), PRIMARY KEY (" + COLUMN_ID + "));";
+			+ RoomsTable.COLUMN_NAME + "), " + COLUMN_COMMENT
+			+ " text, PRIMARY KEY (" + COLUMN_ID + "));";
 }

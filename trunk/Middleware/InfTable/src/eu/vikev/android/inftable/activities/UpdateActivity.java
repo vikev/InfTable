@@ -18,7 +18,8 @@ public class UpdateActivity extends Activity {
 		new XmlParser(this)
 				.execute(
 						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml",
-						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml");
+						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml",
+						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml");
 
 		setContentView(R.layout.activity_update);
 
