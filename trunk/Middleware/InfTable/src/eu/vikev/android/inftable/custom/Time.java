@@ -10,7 +10,7 @@ public class Time {
 	}
 
 	public Time(String t) {
-		t.replace(":", "");
+		t = t.replace(":", "");
 		int time = Integer.parseInt(t);
 		hour = time / 100;
 		minutes = time % 100;
