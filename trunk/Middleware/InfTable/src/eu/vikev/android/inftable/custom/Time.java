@@ -1,5 +1,7 @@
 package eu.vikev.android.inftable.custom;
 
+import java.util.Locale;
+
 public class Time {
 	private int hour;
 	private int minutes;
@@ -22,7 +24,7 @@ public class Time {
 
 	@Override
 	public String toString() {
-		return String.format("%d:%02d", hour, minutes);
+		return String.format(Locale.UK, "%d:%02d", hour, minutes);
 	}
 
 }

@@ -40,8 +40,8 @@ public class RoomDao {
 					.insert(RoomsTable.TABLE_NAME, null, values);
 
 			Cursor cursor = database.query(RoomsTable.TABLE_NAME,
-					RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_ID + " = "
-							+ insertId, null, null, null, null);
+					RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_ID + " = '"
+							+ insertId + "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Room newRoom = cursorToRoom(cursor);
@@ -70,8 +70,8 @@ public class RoomDao {
 			this.open();
 			long id = room.getId();
 
-			database.delete(RoomsTable.TABLE_NAME, RoomsTable.COLUMN_ID + " = "
-					+ id, null);
+			database.delete(RoomsTable.TABLE_NAME, RoomsTable.COLUMN_ID
+					+ " = '" + id + "'", null);
 			this.close();
 		} catch (SQLException e) {
 			this.close();
@@ -111,8 +111,8 @@ public class RoomDao {
 		try {
 			this.open();
 			Cursor cursor = database.query(RoomsTable.TABLE_NAME,
-					RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_ID + "=" + id,
-					null, null, null, null);
+					RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_ID + " = '" + id
+							+ "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Room room = cursorToRoom(cursor);
@@ -128,10 +128,9 @@ public class RoomDao {
 	public Room getRoomByName(String name) throws SQLException {
 		try {
 			this.open();
-			Cursor cursor = database
-					.query(RoomsTable.TABLE_NAME, RoomsTable.ALL_COLUMNS,
-							RoomsTable.COLUMN_NAME + "=" + name, null, null,
-							null, null);
+			Cursor cursor = database.query(RoomsTable.TABLE_NAME,
+					RoomsTable.ALL_COLUMNS, RoomsTable.COLUMN_NAME + " = '"
+							+ name + "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Room room = cursorToRoom(cursor);

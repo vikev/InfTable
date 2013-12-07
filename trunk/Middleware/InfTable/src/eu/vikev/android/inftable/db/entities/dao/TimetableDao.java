@@ -1,10 +1,14 @@
 package eu.vikev.android.inftable.db.entities.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import eu.vikev.android.inftable.custom.Time;
 import eu.vikev.android.inftable.db.DBHelper;
 import eu.vikev.android.inftable.db.TimetableTable;
@@ -65,27 +69,47 @@ public class TimetableDao {
 	/** Inserts a new record in timetable. */
 	public TimetableEntry insert(String course, String semester, String day,
 			int start, int finish, String buildingName, String roomName,
-			String comment) throws SQLException {
-		open();
-		ContentValues values = new ContentValues();
-		values.put(TimetableTable.COLUMN_COURSE, course);
-		values.put(TimetableTable.COLUMN_SEMESTER, semester);
-		values.put(TimetableTable.COLUMN_DAY, day);
-		values.put(TimetableTable.COLUMN_START, start);
-		values.put(TimetableTable.COLUMN_FINISH, finish);
-		values.put(TimetableTable.COLUMN_BUILDING, buildingName);
-		values.put(TimetableTable.COLUMN_ROOM, roomName);
-		values.put(TimetableTable.COLUMN_COMMENT, comment);
+			String comment) {
+		TimetableEntry timetableEntry = null;
+		try {
+			this.close();
+			this.open();
 
-		long insertId = database
-				.insert(TimetableTable.TABLE_NAME, null, values);
+			ContentValues values = new ContentValues();
+			values.put(TimetableTable.COLUMN_COURSE, course);
+			values.put(TimetableTable.COLUMN_SEMESTER, semester);
+			values.put(TimetableTable.COLUMN_DAY, day);
+			values.put(TimetableTable.COLUMN_START, start);
+			values.put(TimetableTable.COLUMN_FINISH, finish);
+			values.put(TimetableTable.COLUMN_BUILDING, buildingName);
+			values.put(TimetableTable.COLUMN_ROOM, roomName);
+			values.put(TimetableTable.COLUMN_COMMENT, comment);
 
-		Cursor cursor = database.query(TimetableTable.TABLE_NAME,
-				TimetableTable.ALL_COLUMNS, TimetableTable.COLUMN_ID + "="
-						+ insertId, null, null, null, null);
-		TimetableEntry timetableEntry = cursorToTimetableEntry(cursor);
-		cursor.close();
-		close();
+			long insertId = database.insertWithOnConflict(
+					TimetableTable.TABLE_NAME, null, values,
+					SQLiteDatabase.CONFLICT_FAIL);
+
+			if (insertId > 0) {
+				Cursor cursor = database.query(TimetableTable.TABLE_NAME,
+						TimetableTable.ALL_COLUMNS, TimetableTable.COLUMN_ID
+								+ " = '" + insertId + "'", null, null, null,
+						null);
+				if (cursor.getCount() > 0) {
+					cursor.moveToFirst();
+					timetableEntry = cursorToTimetableEntry(cursor);
+				}
+				cursor.close();
+			}
+			this.close();
+		} catch (SQLException e) {
+			this.close();
+			Log.e(TimetableDao.class.getName(),
+					"Couldn't open the database. Error: " + e);
+		} catch (Exception e) {
+			this.close();
+			Log.e(TimetableDao.class.getName(),
+					"Error while inserting to timetable.", e);
+		}
 		return timetableEntry;
 
 	}
@@ -94,12 +118,40 @@ public class TimetableDao {
 	 * Inserts the given TimetableEntry entity and changes the instance to the
 	 * new entity taken from the database.
 	 */
-	public void insert(TimetableEntry timetableEntry) throws SQLException {
+	public void insert(TimetableEntry timetableEntry) {
 		timetableEntry = insert(timetableEntry.getCourse().getAcronym(),
 				timetableEntry.getSemester(), timetableEntry.getDay(),
 				timetableEntry.getStart().toInt(), timetableEntry.getEnd()
 						.toInt(), timetableEntry.getBuilding().getName(),
 				timetableEntry.getRoom().getName(), timetableEntry.getComment());
+	}
+
+	public List<TimetableEntry> getTimetableEntriesByCourseAcronym(
+			String acronym) {
+		List<TimetableEntry> entries = new ArrayList<TimetableEntry>();
+
+		try {
+			this.open();
+
+			Cursor cursor = database.query(TimetableTable.TABLE_NAME,
+					TimetableTable.ALL_COLUMNS, TimetableTable.COLUMN_COURSE
+							+ "= '" + acronym + "'", null, null, null, null);
+
+			cursor.moveToFirst();
+
+			while (!cursor.isAfterLast()) {
+				TimetableEntry entry = cursorToTimetableEntry(cursor);
+				entries.add(entry);
+				cursor.moveToNext();
+			}
+
+			cursor.close();
+			this.close();
+			return entries;
+		} catch (SQLException e) {
+			this.close();
+			throw e;
+		}
 	}
 
 }

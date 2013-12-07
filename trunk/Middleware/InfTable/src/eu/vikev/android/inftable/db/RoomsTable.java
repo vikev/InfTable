@@ -17,7 +17,7 @@ public class RoomsTable {
 			+ TABLE_NAME + " (" + COLUMN_ID + " integer, " + COLUMN_NAME
 			+ " text NOT NULL, " + COLUMN_DESCRIPTION + " text, PRIMARY KEY ("
 			+ COLUMN_ID + "), UNIQUE (" + COLUMN_NAME
-			+ "));";
+			+ ") ON CONFLICT REPLACE);";
 
 
 }

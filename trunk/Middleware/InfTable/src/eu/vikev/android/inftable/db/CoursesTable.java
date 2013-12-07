@@ -37,6 +37,6 @@ public class CoursesTable {
 			+ " integer DEFAULT NULL, " + COLUMN_YEAR
 			+ " integer DEFAULT NULL, " + COLUMN_LECTURER + " text, "
 			+ COLUMN_DELIVERYPERIOD + " text, PRIMARY KEY (" + COLUMN_ID
-			+ "), UNIQUE (" + COLUMN_ACRONYM + "));";
+			+ "), UNIQUE (" + COLUMN_ACRONYM + ") ON CONFLICT REPLACE);";
 
 }

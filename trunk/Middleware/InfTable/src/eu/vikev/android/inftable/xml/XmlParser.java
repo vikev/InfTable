@@ -18,12 +18,15 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import eu.vikev.android.inftable.R;
+import eu.vikev.android.inftable.custom.Time;
 import eu.vikev.android.inftable.db.entities.Building;
 import eu.vikev.android.inftable.db.entities.Course;
 import eu.vikev.android.inftable.db.entities.Room;
+import eu.vikev.android.inftable.db.entities.dao.AvailabilityDao;
 import eu.vikev.android.inftable.db.entities.dao.BuildingDao;
 import eu.vikev.android.inftable.db.entities.dao.CourseDao;
 import eu.vikev.android.inftable.db.entities.dao.RoomDao;
+import eu.vikev.android.inftable.db.entities.dao.TimetableDao;
 
 public class XmlParser extends AsyncTask<String, Void, Boolean> {
 
@@ -121,6 +124,12 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			}
 			Log.i(XmlParser.class.getName(), "Getting rooms done.");
 
+		} catch (IOException e) {
+			Log.e(XmlParser.class.getName(),
+					"Couldn't download venues.xml. No connection or wrong URL. "
+							+ e);
+		} catch (NullPointerException e) {
+			Log.e(XmlParser.class.getName(), "Parsing venues.xml error: " + e);
 		} catch (Exception e) {
 			Log.e(XmlParser.class.getName(), "Getting venues error: " + e);
 		}
@@ -202,6 +211,12 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 				courseDao.insert(course);
 			}
 			Log.i(XmlParser.class.getName(), "Getting courses done.");
+		} catch (IOException e) {
+			Log.e(XmlParser.class.getName(),
+					"Couldn't download courses.xml. No connection or wrong URL. "
+							+ e);
+		} catch (NullPointerException e) {
+			Log.e(XmlParser.class.getName(), "Parsing courses.xml error: " + e);
 		} catch (Exception e) {
 			Log.e(XmlParser.class.getName(), "Getting courses error: " + e);
 		}
@@ -218,6 +233,8 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			Log.i(XmlParser.class.getName(), "Getting timetable...");
 
 			URL url = new URL(path);
+			TimetableDao timetableDao = new TimetableDao(context);
+			AvailabilityDao availabilityDao = new AvailabilityDao(context);
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -238,10 +255,12 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			for (int i = 0; i < timetableList.getLength(); i++) {
 				Element lecture = (Element) timetableList.item(i);
 				Node time = lecture.getParentNode();
-				Node day = time.getParentNode();
-				Node semester = day.getParentNode().getParentNode();
+				Node dayNode = time.getParentNode();
+				Node semester = dayNode.getParentNode().getParentNode();
 
-
+				/* Get day */
+				String day = dayNode.getAttributes().getNamedItem("name")
+						.getTextContent();
 				/* Get start and finish. */
 				NamedNodeMap timeAttributes = time.getAttributes();
 				String start = timeAttributes.getNamedItem("start")
@@ -258,7 +277,34 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 				String acronym = lecture.getElementsByTagName("course").item(0)
 						.getTextContent();
 
+				/* Get venue */
+				Element venue = (Element) lecture.getElementsByTagName("venue")
+						.item(0);
 
+				String room = venue.getElementsByTagName("room").item(0)
+						.getTextContent();
+				String building = venue.getElementsByTagName("building")
+						.item(0).getTextContent();
+
+				/* Get comment */
+				String comment = lecture.getElementsByTagName("comment")
+						.item(0).getTextContent();
+
+				/* Get the years */
+				NodeList yearsNode = lecture.getElementsByTagName("year");
+
+				for (int j = 0; j < yearsNode.getLength(); j++) {
+					String value = yearsNode.item(j).getTextContent();
+					int year = Integer.parseInt(value);
+
+					availabilityDao.insert(acronym, year);
+
+				}
+
+				/* Insert this entry */
+				timetableDao.insert(acronym, semesterNum, day,
+						new Time(start).toInt(), new Time(finish).toInt(),
+						building, room, comment);
 			}
 
 		} catch (IOException e) {
@@ -272,5 +318,4 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			Log.e(XmlParser.class.getName(), "Getting timetable error: " + e);
 		}
 	}
-
 }

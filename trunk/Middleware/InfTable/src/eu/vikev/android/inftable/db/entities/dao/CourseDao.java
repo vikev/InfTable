@@ -89,8 +89,8 @@ public class CourseDao {
 					values);
 
 			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ID + " = "
-							+ insertId, null, null, null, null);
+					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ID + " = '"
+							+ insertId + "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Course newCourse = cursorToCourse(cursor);
@@ -115,7 +115,7 @@ public class CourseDao {
 			this.open();
 			long id = course.getId();
 			database.delete(CoursesTable.TABLE_NAME, CoursesTable.COLUMN_ID
-					+ " = " + id, null);
+					+ " = '" + id + "'", null);
 			this.close();
 		} catch (SQLException e) {
 			this.close();
@@ -155,8 +155,8 @@ public class CourseDao {
 		try {
 			this.open();
 			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-					CoursesTable.ALL_COLUMNS,
-					CoursesTable.COLUMN_ID + "=" + id, null, null, null, null);
+					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ID + " = '"
+							+ id + "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Course course = cursorToCourse(cursor);
@@ -173,8 +173,8 @@ public class CourseDao {
 		try {
 			this.open();
 			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ACRONYM + "="
-							+ acronym, null, null, null, null);
+					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ACRONYM
+							+ " = '" + acronym + "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Course course = cursorToCourse(cursor);
@@ -210,10 +210,15 @@ public class CourseDao {
 		return course;
 	}
 
+	/**
+	 * Takes a new course and inserts it into the db. After that changes the
+	 * input class instance to the one returned by the db after the insertion,
+	 * i.e. assigns id
+	 */
 	public void insert(Course course) throws SQLException {
 		try {
 			this.open();
-			this.insert(course.getEuclid(), course.getAcronym(),
+			course = this.insert(course.getEuclid(), course.getAcronym(),
 					course.getName(), course.getUrl(), course.getDrps(),
 					course.getAi(), course.getCg(), course.getCs(),
 					course.getSe(), course.getLevel(), course.getPoints(),

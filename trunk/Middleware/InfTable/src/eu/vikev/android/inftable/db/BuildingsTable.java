@@ -18,7 +18,7 @@ public class BuildingsTable {
 			+ TABLE_NAME + " (" + COLUMN_ID + " integer, " + COLUMN_NAME
 			+ " text NOT NULL, " + COLUMN_DESCRIPTION + " text, " + COLUMN_MAP
 			+ " text, PRIMARY KEY (" + COLUMN_ID + "), UNIQUE (" + COLUMN_NAME
-			+ "));";
+			+ ") ON CONFLICT REPLACE);";
 
 
 }

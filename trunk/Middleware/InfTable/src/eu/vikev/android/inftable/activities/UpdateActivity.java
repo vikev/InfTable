@@ -21,6 +21,8 @@ public class UpdateActivity extends Activity {
 						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml",
 						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml");
 
+
+
 		setContentView(R.layout.activity_update);
 
 		SharedPreferences pref = this.getSharedPreferences(

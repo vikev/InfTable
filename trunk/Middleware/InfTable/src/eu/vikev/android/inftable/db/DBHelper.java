@@ -28,6 +28,18 @@ public class DBHelper extends SQLiteOpenHelper {
 			Log.i(CoursesTable.class.getName(), "Table availabilities created.");
 			database.execSQL(TimetableTable.TABLE_CREATE);
 			Log.i(CoursesTable.class.getName(), "Table timetable created.");
+			database.execSQL(AvailabilitiesTable.TRIGGER_FKI_COURSE);
+			Log.i(CoursesTable.class.getName(),
+					"FK trigger availabilities.course->courses.acronym created.");
+			database.execSQL(TimetableTable.TRIGGER_FKI_COURSE);
+			Log.i(CoursesTable.class.getName(),
+					"FK trigger timetable.course->courses.acronym created.");
+			database.execSQL(TimetableTable.TRIGGER_FKI_BUILDING);
+			Log.i(CoursesTable.class.getName(),
+					"FK trigger timetable.building->building.name created.");
+			database.execSQL(TimetableTable.TRIGGER_FKI_ROOM);
+			Log.i(CoursesTable.class.getName(),
+					"FK trigger timetable.room->rooms.name created.");
 		} catch (Exception e) {
 			Log.e(CoursesTable.class.getName(),
 					"Couldn't create the database. Error: ", e);

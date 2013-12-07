@@ -77,7 +77,7 @@ public class BuildingDao {
 
 			Cursor cursor = database.query(BuildingsTable.TABLE_NAME,
 					BuildingsTable.ALL_COLUMNS, BuildingsTable.COLUMN_ID
-							+ " = " + insertId, null, null, null, null);
+							+ " = '" + insertId + "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Building newBuilding = cursorToBuilding(cursor);
@@ -103,7 +103,7 @@ public class BuildingDao {
 			long id = building.getId();
 
 			database.delete(BuildingsTable.TABLE_NAME, BuildingsTable.COLUMN_ID
-					+ " = " + id, null);
+					+ " = '" + id + "'", null);
 			this.close();
 		} catch (SQLException e) {
 			this.close();
@@ -143,8 +143,8 @@ public class BuildingDao {
 		try {
 			this.open();
 			Cursor cursor = database.query(BuildingsTable.TABLE_NAME,
-					BuildingsTable.ALL_COLUMNS, BuildingsTable.COLUMN_ID + "="
-							+ id, null, null, null, null);
+					BuildingsTable.ALL_COLUMNS, BuildingsTable.COLUMN_ID
+							+ " = '" + id + "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Building building = cursorToBuilding(cursor);
@@ -162,7 +162,7 @@ public class BuildingDao {
 			this.open();
 			Cursor cursor = database.query(BuildingsTable.TABLE_NAME,
 					BuildingsTable.ALL_COLUMNS, BuildingsTable.COLUMN_NAME
-							+ "=" + name, null, null, null, null);
+							+ " = '" + name + "'", null, null, null, null);
 
 			cursor.moveToFirst();
 			Building building = cursorToBuilding(cursor);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import eu.vikev.android.inftable.db.AvailabilitiesTable;
 import eu.vikev.android.inftable.db.DBHelper;
 import eu.vikev.android.inftable.db.entities.Availability;
@@ -28,30 +29,50 @@ public class AvailabilityDao {
 		dbHelper.close();
 	}
 
-	public Availability insert(String courseAcronym, int year)
-			throws SQLException {
+	public Availability insert(String courseAcronym, int year) {
+		Availability newAvailability = null;
+		System.out.println("Now will insert: " + courseAcronym + " " + year);
 		try {
 			ContentValues values = new ContentValues();
 			values.put(AvailabilitiesTable.COLUMN_COURSE, courseAcronym);
 			values.put(AvailabilitiesTable.COLUMN_YEAR, year);
+			this.close();
 			open();
-			long insertId = database.insert(AvailabilitiesTable.TABLE_NAME,
-					null, values);
 
-			Cursor cursor = database.query(AvailabilitiesTable.TABLE_NAME,
-					AvailabilitiesTable.ALL_COLUMNS,
-					AvailabilitiesTable.COLUMN_ID + " = " + insertId, null,
-					null, null, null);
+			long insertId = database.insertWithOnConflict(
+					AvailabilitiesTable.TABLE_NAME, null, values,
+					SQLiteDatabase.CONFLICT_FAIL);
 
-			cursor.moveToFirst();
-			Availability newAvailability = cursorToRoom(cursor);
-			cursor.close();
-			close();
-			return newAvailability;
+			System.out.println(courseAcronym + " " + year + " id: " + insertId);
+
+			if (insertId > 0) {
+				Cursor cursor = database
+						.query(AvailabilitiesTable.TABLE_NAME,
+								AvailabilitiesTable.ALL_COLUMNS,
+								AvailabilitiesTable.COLUMN_ID + " = '"
+										+ insertId + "'", null, null, null,
+								null);
+				System.out.println("Cursor size: " + cursor.getCount());
+				if (cursor.getCount() > 0) {
+					cursor.moveToFirst();
+					newAvailability = cursorToAvailability(cursor);
+					System.out.println("Inserted: " + courseAcronym + " "
+							+ year);
+				}
+				cursor.close();
+			}
+			this.close();
+
 		} catch (SQLException e) {
-			close();
-			throw e;
+			this.close();
+			Log.e(AvailabilityDao.class.getName(),
+					"Couldn't insert availability.", e);
+		} catch (Exception e) {
+			this.close();
+			Log.e(AvailabilityDao.class.getName(),
+					"Error while inserting availability.", e);
 		}
+		return newAvailability;
 	}
 
 	public Availability insert(Course course, int year) throws SQLException {
@@ -68,11 +89,11 @@ public class AvailabilityDao {
 			open();
 			Cursor cursor = database.query(AvailabilitiesTable.TABLE_NAME,
 					AvailabilitiesTable.ALL_COLUMNS,
-					AvailabilitiesTable.COLUMN_ID + "=" + id, null, null, null,
-					null);
+					AvailabilitiesTable.COLUMN_ID + " = '" + id + "'", null,
+					null, null, null);
 
 			cursor.moveToFirst();
-			Availability availability = cursorToRoom(cursor);
+			Availability availability = cursorToAvailability(cursor);
 			cursor.close();
 			close();
 			return availability;
@@ -82,8 +103,8 @@ public class AvailabilityDao {
 		}
 	}
 
-	/** Turn a cursor to a Room entity */
-	private Availability cursorToRoom(Cursor cursor) {
+	/** Turn a cursor to an Availability entity */
+	private Availability cursorToAvailability(Cursor cursor) {
 		CourseDao courseDao = new CourseDao(context);
 		Availability availability = new Availability();
 
