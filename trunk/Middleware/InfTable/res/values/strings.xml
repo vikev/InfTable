@@ -14,5 +14,6 @@
     <string name="btn_cancle">Cancle</string>
     <string name="btn_download">Download</string>
     <string name="label_update_title">Update courses and timetable information</string>
+    <string name="title_activity_updating">UpdatingActivity</string>
 
 </resources>

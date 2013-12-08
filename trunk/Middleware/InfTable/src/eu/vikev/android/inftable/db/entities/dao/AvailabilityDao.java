@@ -31,7 +31,6 @@ public class AvailabilityDao {
 
 	public Availability insert(String courseAcronym, int year) {
 		Availability newAvailability = null;
-		System.out.println("Now will insert: " + courseAcronym + " " + year);
 		try {
 			ContentValues values = new ContentValues();
 			values.put(AvailabilitiesTable.COLUMN_COURSE, courseAcronym);
@@ -43,7 +42,6 @@ public class AvailabilityDao {
 					AvailabilitiesTable.TABLE_NAME, null, values,
 					SQLiteDatabase.CONFLICT_FAIL);
 
-			System.out.println(courseAcronym + " " + year + " id: " + insertId);
 
 			if (insertId > 0) {
 				Cursor cursor = database
@@ -52,12 +50,10 @@ public class AvailabilityDao {
 								AvailabilitiesTable.COLUMN_ID + " = '"
 										+ insertId + "'", null, null, null,
 								null);
-				System.out.println("Cursor size: " + cursor.getCount());
+
 				if (cursor.getCount() > 0) {
 					cursor.moveToFirst();
 					newAvailability = cursorToAvailability(cursor);
-					System.out.println("Inserted: " + courseAcronym + " "
-							+ year);
 				}
 				cursor.close();
 			}

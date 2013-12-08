@@ -14,11 +14,19 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.util.Log;
 import eu.vikev.android.inftable.R;
+import eu.vikev.android.inftable.activities.MainActivity;
 import eu.vikev.android.inftable.custom.Time;
+import eu.vikev.android.inftable.db.DBHelper;
 import eu.vikev.android.inftable.db.entities.Building;
 import eu.vikev.android.inftable.db.entities.Course;
 import eu.vikev.android.inftable.db.entities.Room;
@@ -29,24 +37,64 @@ import eu.vikev.android.inftable.db.entities.dao.RoomDao;
 import eu.vikev.android.inftable.db.entities.dao.TimetableDao;
 
 public class XmlParser extends AsyncTask<String, Void, Boolean> {
+	private String errorMsg = "";
 
 	private CourseDao courseDao;
 	private BuildingDao buildingDao;
 	private RoomDao roomDao;
+	private TimetableDao timetableDao;
+	private AvailabilityDao availabilityDao;
+
 	private Context context;
+	private ProgressDialog dialog;
 
 	public XmlParser(Context context) {
 		this.context = context;
 		courseDao = new CourseDao(context);
 		buildingDao = new BuildingDao(context);
 		roomDao = new RoomDao(context);
+		timetableDao = new TimetableDao(context);
+		availabilityDao = new AvailabilityDao(context);
+		dialog = new ProgressDialog(context);
+	}
+
+	protected void onPreExecute() {
+		dialog.setCancelable(false);
+		dialog.setMessage("Downloading data... Please wait.");
+		dialog.show();
 	}
 
 	protected Boolean doInBackground(String... urls) {
-		getVenues(urls[0]);
-		getCourses(urls[1]);
-		getTimetable(urls[2]);
-		return true;
+		if (getVenues(urls[0]) && getCourses(urls[1]) && getTimetable(urls[2])) {
+			SharedPreferences pref = context.getSharedPreferences(
+					"eu.vikev.android.inftable", Context.MODE_PRIVATE);
+			Editor editor = pref.edit();
+			editor.putBoolean("firstRun", false);
+			editor.commit();
+			dialog.dismiss();
+			context.startActivity(new Intent(context, MainActivity.class));
+			((Activity) context).finish();
+			return true;
+		}
+		Log.e(XmlParser.class.getName(), "Couldn't get the necessary data.");
+		context.deleteDatabase(DBHelper.DATABASE_NAME);
+		dialog.dismiss();
+		return false;
+	}
+
+	protected void onPostExecute(Boolean success) {
+		if (!success) {
+			showError();
+		}
+	}
+
+	private void showError() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("Couldn't get the necessary data");
+		builder.setMessage(errorMsg);
+		builder.setPositiveButton("OK", null);
+		builder.create().show();
+		System.out.println("Open error dialog....");
 	}
 
 	/**
@@ -55,7 +103,7 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 	 * @param path
 	 *            URL to venues.xml
 	 */
-	private void getVenues(String path) {
+	private Boolean getVenues(String path) {
 		try {
 			Log.i(XmlParser.class.getName(), "Getting venues...");
 
@@ -77,7 +125,6 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 
 			NodeList buildingsList = doc.getElementsByTagName("building");
 			NodeList roomsList = doc.getElementsByTagName("room");
-
 			/* insert buildings */
 			Log.i(XmlParser.class.getName(), "Getting buildings...");
 			for (int i = 0; i < buildingsList.getLength(); i++) {
@@ -125,14 +172,22 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			Log.i(XmlParser.class.getName(), "Getting rooms done.");
 
 		} catch (IOException e) {
+			errorMsg = "Couldn't download venues.xml. No connection or wrong URL.";
 			Log.e(XmlParser.class.getName(),
 					"Couldn't download venues.xml. No connection or wrong URL. "
 							+ e);
+			return false;
 		} catch (NullPointerException e) {
+			errorMsg = "Parsing venues.xml error. Couldn't validate venues.xml.";
 			Log.e(XmlParser.class.getName(), "Parsing venues.xml error: " + e);
+			return false;
 		} catch (Exception e) {
+			errorMsg = "Error occured while parsing venues.xml.";
 			Log.e(XmlParser.class.getName(), "Getting venues error: " + e);
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -141,7 +196,7 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 	 * @param path
 	 *            URL to courses.xml
 	 */
-	private void getCourses(String path) {
+	private Boolean getCourses(String path) {
 		try {
 			Log.i(XmlParser.class.getName(), "Getting courses...");
 
@@ -212,14 +267,21 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			}
 			Log.i(XmlParser.class.getName(), "Getting courses done.");
 		} catch (IOException e) {
+			errorMsg = "Couldn't download courses.xml. No connection or wrong URL.";
 			Log.e(XmlParser.class.getName(),
 					"Couldn't download courses.xml. No connection or wrong URL. "
 							+ e);
+			return false;
 		} catch (NullPointerException e) {
+			errorMsg = "Parsing venues.xml error. Couldn't validate courses.xml.";
 			Log.e(XmlParser.class.getName(), "Parsing courses.xml error: " + e);
+			return false;
 		} catch (Exception e) {
+			errorMsg = "Error occured while parsing courses.xml.";
 			Log.e(XmlParser.class.getName(), "Getting courses error: " + e);
+			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -228,13 +290,11 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 	 * @param path
 	 *            URL to timetable.xml
 	 */
-	private void getTimetable(String path) {
+	private Boolean getTimetable(String path) {
 		try {
 			Log.i(XmlParser.class.getName(), "Getting timetable...");
 
 			URL url = new URL(path);
-			TimetableDao timetableDao = new TimetableDao(context);
-			AvailabilityDao availabilityDao = new AvailabilityDao(context);
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -308,14 +368,22 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			}
 
 		} catch (IOException e) {
+			errorMsg = "Couldn't download timetable.xml. No connection or wrong URL.";
 			Log.e(XmlParser.class.getName(),
 					"Couldn't download timetable.xml. No connection or wrong URL. "
 							+ e);
+			return false;
 		} catch (NullPointerException e) {
+			errorMsg = "Parsing venues.xml error. Couldn't validate timetable.xml.";
 			Log.e(XmlParser.class.getName(), "Parsing timetable.xml error: "
 					+ e);
+			return false;
 		} catch (Exception e) {
+			errorMsg = "Error occured while parsing timetable.xml.";
 			Log.e(XmlParser.class.getName(), "Getting timetable error: " + e);
+			return false;
 		}
+		return true;
 	}
+
 }

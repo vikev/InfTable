@@ -1,12 +1,12 @@
 package eu.vikev.android.inftable.activities;
 
-import eu.vikev.android.inftable.R;
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
+import eu.vikev.android.inftable.R;
 
 public class MainActivity extends Activity {
 
@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
 		SharedPreferences pref = this.getSharedPreferences(
 				"eu.vikev.android.inftable", Context.MODE_PRIVATE);
 
-		if (!pref.getBoolean("firstRun", false)) {
+		if (pref.getBoolean("firstRun", true)) {
 			Log.i(MainActivity.class.getName(),
 					"This is the first run. Bringing update activity to the front.");
 			Intent intent = new Intent(MainActivity.this, UpdateActivity.class);
