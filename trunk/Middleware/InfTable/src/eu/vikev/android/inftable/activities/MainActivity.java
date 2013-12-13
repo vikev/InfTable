@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import eu.vikev.android.inftable.R;
 
 public class MainActivity extends Activity {
@@ -35,5 +36,16 @@ public class MainActivity extends Activity {
 	 * menu; this adds items to the action bar if it is present.
 	 * getMenuInflater().inflate(R.menu.main, menu); return true; }
 	 */
+
+	/**
+	 * On click open AllCourses activity.
+	 * 
+	 * @param v
+	 */
+	public void showAllCoursesActivity(View v) {
+		Intent intent = new Intent(MainActivity.this, AllCoursesActivity.class);
+		startActivity(intent);
+	}
+
 
 }

@@ -132,7 +132,8 @@ public class CourseDao {
 			List<Course> courses = new ArrayList<Course>();
 
 			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-					CoursesTable.ALL_COLUMNS, null, null, null, null, null);
+					CoursesTable.ALL_COLUMNS, null, null, null, null,
+					CoursesTable.COLUMN_NAME);
 
 			cursor.moveToFirst();
 

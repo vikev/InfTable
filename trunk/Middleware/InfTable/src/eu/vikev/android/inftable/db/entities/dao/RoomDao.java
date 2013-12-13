@@ -107,6 +107,35 @@ public class RoomDao {
 		}
 	}
 
+	/**
+	 * @return Get rooms corresponding to certain conditions.
+	 */
+	public List<Room> getRooms(String selection) {
+		try {
+			this.open();
+			List<Room> rooms = new ArrayList<Room>();
+
+			Cursor cursor = database.query(RoomsTable.TABLE_NAME,
+					RoomsTable.ALL_COLUMNS, selection, null, null, null, null);
+
+			cursor.moveToFirst();
+
+			while (!cursor.isAfterLast()) {
+				Room room = cursorToRoom(cursor);
+				rooms.add(room);
+				cursor.moveToNext();
+			}
+
+			cursor.close();
+			this.close();
+			return rooms;
+		} catch (SQLException e) {
+			Log.e(RoomDao.class.getName(), "Error in getRooms query: " + e);
+			this.close();
+		}
+		return null;
+	}
+
 	public Room getRoomById(long id) throws SQLException {
 		try {
 			this.open();
