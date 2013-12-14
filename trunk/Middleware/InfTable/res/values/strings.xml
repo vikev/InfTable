@@ -19,6 +19,15 @@
     <string name="label_show_all_courses_subtitle">All courses order alphabetically with filtering options</string>
     <string name="title_activity_all_courses">AllCoursesActivity</string>
     <string name="title_activity_course">CourseActivity</string>
-	<string name="home">Home</string>
-	<string name="all_courses">All courses</string>
+    <string name="home">Home</string>
+    <string name="all_courses">All courses</string>
+    <string name="semester1">Semester 1</string>
+    <string name="semester2">Semester 2</string>
+    <string name="year1">Year 1</string>
+    <string name="year2">Year 2</string>
+    <string name="year3">Year 3</string>
+    <string name="year4">Year 4</string>
+    <string name="year5">Year 5</string>
+	<string name="search_hint">Search by name, code or lecturer.</string>
+	<string name="clear">Clear</string>
 </resources>

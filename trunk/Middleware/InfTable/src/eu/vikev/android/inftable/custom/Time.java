@@ -12,8 +12,8 @@ public class Time {
 	}
 
 	public Time(String t) {
-		t = t.replace(":", "");
-		int time = Integer.parseInt(t);
+		String tmp = t.replace(":", "");
+		int time = Integer.parseInt(tmp);
 		hour = time / 100;
 		minutes = time % 100;
 	}

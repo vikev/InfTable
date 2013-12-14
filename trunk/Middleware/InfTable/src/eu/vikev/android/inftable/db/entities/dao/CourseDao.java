@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import eu.vikev.android.inftable.db.AvailabilitiesTable;
 import eu.vikev.android.inftable.db.CoursesTable;
 import eu.vikev.android.inftable.db.DBHelper;
 import eu.vikev.android.inftable.db.entities.Course;
@@ -126,7 +127,7 @@ public class CourseDao {
 	/**
 	 * @return All courses.
 	 */
-	public List<Course> getAllCourses() throws SQLException {
+	public List<Course> getAllCourses() {
 		try {
 			this.open();
 			List<Course> courses = new ArrayList<Course>();
@@ -147,12 +148,21 @@ public class CourseDao {
 			close();
 			return courses;
 		} catch (SQLException e) {
+			Log.e(CourseDao.class.getName(),
+					"Error executing get all courses query. ", e);
 			this.close();
-			throw e;
 		}
+		return null;
 	}
 
-	public Course getCourseById(long id) throws SQLException {
+	/**
+	 * Get course by id.
+	 * 
+	 * @param id
+	 *            id of the course.
+	 * @return Course entity or null if not found.
+	 */
+	public Course getCourseById(long id) {
 		try {
 			this.open();
 			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
@@ -165,12 +175,21 @@ public class CourseDao {
 			this.close();
 			return course;
 		} catch (SQLException e) {
+			Log.e(CourseDao.class.getName(),
+					"Error executing get course query. ", e);
 			this.close();
-			throw e;
 		}
+		return null;
 	}
 
-	public Course getCourseByAcronym(String acronym) throws SQLException {
+	/**
+	 * Get course by acronym.
+	 * 
+	 * @param acronym
+	 *            Acronym of the course.
+	 * @return Course entity or null if not found.
+	 */
+	public Course getCourseByAcronym(String acronym) {
 		try {
 			this.open();
 			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
@@ -183,9 +202,11 @@ public class CourseDao {
 			this.close();
 			return course;
 		} catch (SQLException e) {
+			Log.e(CourseDao.class.getName(),
+					"Error executing get course query.", e);
 			this.close();
-			throw e;
 		}
+		return null;
 	}
 
 	/** Turn a cursor to a Course entity */
@@ -216,7 +237,7 @@ public class CourseDao {
 	 * input class instance to the one returned by the db after the insertion,
 	 * i.e. assigns id
 	 */
-	public void insert(Course course) throws SQLException {
+	public void insert(Course course) {
 		try {
 			this.open();
 			course = this.insert(course.getEuclid(), course.getAcronym(),
@@ -227,9 +248,120 @@ public class CourseDao {
 					course.getDeliveryPeriod());
 			this.close();
 		} catch (SQLException e) {
+			Log.e(CourseDao.class.getName(), "Couldn't insert new course.. ", e);
 			this.close();
-			throw e;
 		}
+	}
+
+	/**
+	 * Gets courses meeting certain criteria.
+	 * 
+	 * @param sem1
+	 *            Include semester 1?
+	 * @param sem2
+	 *            Include semester 2?
+	 * @param year1
+	 *            Include year 1?
+	 * @param year2
+	 *            Include year 2?
+	 * @param year3
+	 *            Include year 3?
+	 * @param year4
+	 *            Include year 4?
+	 * @param year5
+	 *            Include year 5?
+	 * @return List of course entities or empty list on error or whenever no
+	 *         courses meet the criteria.
+	 */
+	public List<Course> getFilteredCourses(String search, boolean sem1,
+			boolean sem2,
+			boolean year1, boolean year2, boolean year3, boolean year4,
+			boolean year5) {
+		List<Course> courses = new ArrayList<Course>();
+		try {
+			String query = "SELECT ct.* FROM " + CoursesTable.TABLE_NAME
+					+ " AS ct WHERE 1";
+
+			if (!"".equals(search)) {
+				query += " AND (UPPER(ct." + CoursesTable.COLUMN_ACRONYM
+						+ ") LIKE UPPER('%" + search + "%') OR UPPER(ct."
+						+ CoursesTable.COLUMN_NAME + ") LIKE UPPER('%" + search
+						+ "%') OR UPPER(ct." + CoursesTable.COLUMN_EUCLID
+						+ ") LIKE UPPER('%" + search + "%') OR UPPER(ct."
+						+ CoursesTable.COLUMN_LECTURER + ") LIKE UPPER('%"
+						+ search
+						+ "%'))";
+			}
+
+			if (!sem1) {
+				query += " AND ct." + CoursesTable.COLUMN_DELIVERYPERIOD
+						+ "<>'S1'";
+			}
+
+			if (!sem2) {
+				query += " AND ct." + CoursesTable.COLUMN_DELIVERYPERIOD
+						+ "<>'S2'";
+			}
+
+			String subquery = "SELECT at." + AvailabilitiesTable.COLUMN_COURSE
+					+ " AS " + CoursesTable.COLUMN_ACRONYM + " FROM "
+					+ AvailabilitiesTable.TABLE_NAME + " as at WHERE ct."
+					+ CoursesTable.COLUMN_ACRONYM + "=at."
+					+ AvailabilitiesTable.COLUMN_COURSE + " AND (0";
+
+			query += " AND ((0";
+			if (year1) {
+				query += " OR ct." + CoursesTable.COLUMN_YEAR + "=1";
+				subquery += " OR at." + AvailabilitiesTable.COLUMN_YEAR + "=1";
+			}
+
+			if (year2) {
+				query += " OR ct." + CoursesTable.COLUMN_YEAR + "=2";
+				subquery += " OR at." + AvailabilitiesTable.COLUMN_YEAR + "=2";
+			}
+
+			if (year3) {
+				query += " OR ct." + CoursesTable.COLUMN_YEAR + "=3";
+				subquery += " OR at." + AvailabilitiesTable.COLUMN_YEAR + "=3";
+			}
+
+			if (year4) {
+				query += " OR ct." + CoursesTable.COLUMN_YEAR + "=4";
+				subquery += " OR at." + AvailabilitiesTable.COLUMN_YEAR + "=4";
+			}
+
+			if (year5) {
+				query += " OR ct." + CoursesTable.COLUMN_YEAR + "=5";
+				subquery += " OR at." + AvailabilitiesTable.COLUMN_YEAR + "=5";
+			}
+
+			subquery += ")";
+			query += ") OR ct." + CoursesTable.COLUMN_ACRONYM + " IN ("
+					+ subquery + ")) ORDER BY " + CoursesTable.COLUMN_NAME
+					+ " ASC";
+
+			this.open();
+			Cursor cursor = database.rawQuery(query, null);
+
+			if (cursor.moveToFirst()) {
+				Log.i(CourseDao.class.getName(),
+						"Filter query didn't return any results.");
+				while (!cursor.isAfterLast()) {
+					Course course = cursorToCourse(cursor);
+					courses.add(course);
+					cursor.moveToNext();
+				}
+			}
+			cursor.close();
+			this.close();
+			return courses;
+		} catch (SQLException e) {
+			Log.e(CourseDao.class.getName(),
+					"Error executing get filtered courses query.", e);
+			this.close();
+		}
+
+		return courses;
 	}
 
 }

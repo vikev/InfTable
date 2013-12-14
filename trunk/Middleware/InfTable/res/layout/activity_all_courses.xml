@@ -1,13 +1,124 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <ToggleButton
-        android:id="@+id/toggleButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Semester 1 courses" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:weightSum="1" >
+
+        <LinearLayout
+            android:id="@+id/dummyView"
+            android:layout_width="0dip"
+            android:layout_height="0dip"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal" />
+
+        <EditText
+            android:id="@+id/editText_search"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".8"
+            android:ems="10"
+            android:hint="@string/search_hint"
+            android:inputType="text"
+            android:nextFocusLeft="@id/editText_search"
+            android:nextFocusUp="@id/editText_search" >
+        </EditText>
+
+        <Button
+            android:id="@+id/button1"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"
+            android:onClick="clearSearch"
+            android:text="@string/clear" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:weightSum="1" >
+
+        <ToggleButton
+            android:id="@+id/toggleButton_sem1"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/semester1"
+            android:textOn="@string/semester1" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton_sem2"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/semester2"
+            android:textOn="@string/semester2" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:weightSum="1" >
+
+        <ToggleButton
+            android:id="@+id/toggleButton_year1"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/year1"
+            android:textOn="@string/year1" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton_year2"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/year2"
+            android:textOn="@string/year2" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton_year3"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/year3"
+            android:textOn="@string/year3" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton_year4"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/year4"
+            android:textOn="@string/year4" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton_year5"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/year5"
+            android:textOn="@string/year5" />
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scrollView_all_courses"
@@ -19,6 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
+
         </LinearLayout>
     </ScrollView>
 
