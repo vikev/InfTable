@@ -190,6 +190,5 @@ public class AllCoursesActivity extends MenuActivity {
 	public void clearSearch(View v) {
 		Intent intent = new Intent(this, AllCoursesActivity.class);
 		startActivity(intent);
-		finish();
 	}
 }
