@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
@@ -36,32 +36,6 @@
             android:layout_weight=".2"
             android:onClick="clearSearch"
             android:text="@string/clear" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:weightSum="1" >
-
-        <ToggleButton
-            android:id="@+id/toggleButton_sem1"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:checked="true"
-            android:onClick="update"
-            android:textOff="@string/semester1"
-            android:textOn="@string/semester1" />
-
-        <ToggleButton
-            android:id="@+id/toggleButton_sem2"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:checked="true"
-            android:onClick="update"
-            android:textOff="@string/semester2"
-            android:textOn="@string/semester2" />
     </LinearLayout>
 
     <LinearLayout
@@ -119,10 +93,37 @@
             android:textOff="@string/year5"
             android:textOn="@string/year5" />
     </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:weightSum="1" >
+
+        <ToggleButton
+            android:id="@+id/toggleButton_sem1"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/semester1"
+            android:textOn="@string/semester1" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton_sem2"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:checked="true"
+            android:onClick="update"
+            android:textOff="@string/semester2"
+            android:textOn="@string/semester2" />
+        
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scrollView_all_courses"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="fill_parent" >
 
         <LinearLayout

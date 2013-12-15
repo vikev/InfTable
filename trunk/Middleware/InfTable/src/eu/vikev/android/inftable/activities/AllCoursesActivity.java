@@ -2,18 +2,18 @@ package eu.vikev.android.inftable.activities;
 
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import eu.vikev.android.inftable.MenuActivity;
 import eu.vikev.android.inftable.R;
@@ -98,20 +98,18 @@ public class AllCoursesActivity extends MenuActivity {
 
 		LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout_all_courses);
 
-		// will contain all layout elements for one course instance
-		RelativeLayout container = new RelativeLayout(this);
-		RelativeLayout.LayoutParams containerLayout = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		container.setLayoutParams(containerLayout);
+		LayoutInflater inflater = (LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View view = inflater.inflate(R.layout.courses_list_entry, null);
 
-		// course code and title
-		TextView tv = new TextView(this);
-		tv.setText("(" + course.getAcronym() + ") " + course.getName());
-		tv.setTextSize(26);
-		tv.setHeight(60);
-		tv.setGravity(Gravity.CENTER_VERTICAL);
+		TextView lbl = (TextView) view.findViewById(R.id.textView_course_info);
+		lbl.setText(course.getAcronym() + " - " + course.getName());
+
+		ImageButton btn = (ImageButton) view.findViewById(R.id.btnAddRemove);
+		btn.setImageResource(R.drawable.remove);
+
 		final String acronym = course.getAcronym();
-
+		// On click listener for the label
 		OnClickListener listener = new OnClickListener() {
 
 			@Override
@@ -124,25 +122,33 @@ public class AllCoursesActivity extends MenuActivity {
 
 		};
 
-		tv.setOnClickListener(listener);
+		lbl.setOnClickListener(listener);
+		view.setOnClickListener(listener);
+		// set button image and onClickListener for it
+		if (myCourseDao.isMyCourse(acronym)) {
+			btn.setImageResource(R.drawable.remove);
+			listener = new OnClickListener() {
 
-		// container for the text
-		LinearLayout.LayoutParams textContainerparams = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		textContainerparams.setMargins(0, 0, 0, 60);
+				@Override
+				public void onClick(View v) {
+					myCourseDao.delete(acronym);
+					update(v);
+				}
+			};
+		} else {
+			btn.setImageResource(R.drawable.add);
+			listener = new OnClickListener() {
 
-		LinearLayout textContainer = new LinearLayout(this);
-		textContainer.setLayoutParams(textContainerparams);
+				@Override
+				public void onClick(View v) {
+					myCourseDao.insert(acronym);
+					update(v);
+				}
+			};
+		}
+		btn.setOnClickListener(listener);
 
-		textContainer.addView(tv);
-		container.addView(textContainer);
-
-		// container for the button
-		LinearLayout buttonContainer = new LinearLayout(this);
-
-		// TODO: buttons for add/remove course to/from my courses
-
-		ll.addView(container);
+		ll.addView(view);
 	}
 
 	public void update(View v) {

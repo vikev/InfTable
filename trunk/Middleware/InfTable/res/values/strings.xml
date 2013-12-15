@@ -30,4 +30,9 @@
     <string name="year5">Year 5</string>
 	<string name="search_hint">Search by name, code or lecturer.</string>
 	<string name="clear">Clear</string>
+	<string name="add_remove_course">Add/Remove course to/from my courses.</string>
+	<string name="ai">AI</string>
+	<string name="cg">CG</string>
+	<string name="cs">CS</string>
+	<string name="se">SE</string>
 </resources>
