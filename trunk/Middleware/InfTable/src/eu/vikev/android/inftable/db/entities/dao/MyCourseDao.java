@@ -39,7 +39,7 @@ public class MyCourseDao {
 			values.put(MyCoursesTable.COLUMN_COURSE, acronym);
 
 			database.insert(MyCoursesTable.TABLE_NAME, null, values);
-
+			this.close();
 		} catch (SQLException e) {
 			Log.e(MyCourseDao.class.getName(),
 					"Couldn't add course to my courses.", e);

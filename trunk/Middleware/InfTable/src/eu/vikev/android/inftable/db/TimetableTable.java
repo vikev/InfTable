@@ -30,6 +30,7 @@ public class TimetableTable {
 			+ " = NEW."
 			+ COLUMN_COURSE + ") IS NULL; END;";
 
+	// Not in use as some rooms are not present in venues
 	protected static final String TRIGGER_FKI_BUILDING = "CREATE TRIGGER fki_timetable_building_buildings_name BEFORE INSERT ON "
 			+ TABLE_NAME
 			+ " FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'insert on table \""
@@ -43,6 +44,7 @@ public class TimetableTable {
 			+ " = NEW."
 			+ COLUMN_BUILDING + ") IS NULL; END;";
 
+	// Not in use as some rooms are not present in venues
 	protected static final String TRIGGER_FKI_ROOM = "CREATE TRIGGER fki_timetable_room_rooms_name BEFORE INSERT ON "
 			+ TABLE_NAME
 			+ " FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'insert on table \""

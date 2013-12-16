@@ -68,6 +68,7 @@ public class CourseDao {
 			String url, String drps, int ai, int cg, int cs, int se, int level,
 			int points, int year, String lecturer, String deliveryPeriod)
 			throws SQLException {
+		Course newCourse = null;
 		try {
 			this.open();
 			ContentValues values = new ContentValues();
@@ -93,15 +94,16 @@ public class CourseDao {
 					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ID + " = '"
 							+ insertId + "'", null, null, null, null);
 
-			cursor.moveToFirst();
-			Course newCourse = cursorToCourse(cursor);
+			if (cursor.moveToFirst()) {
+				newCourse = cursorToCourse(cursor);
+			}
 			cursor.close();
 			close();
-			return newCourse;
 		} catch (SQLException e) {
+			Log.e(CourseDao.class.getName(), "Couldn't insert course.", e);
 			this.close();
-			throw e;
 		}
+		return newCourse;
 	}
 
 	/**
@@ -110,7 +112,7 @@ public class CourseDao {
 	 * @param course
 	 *            course instance.
 	 */
-	public void delete(Course course) throws SQLException {
+	public void delete(Course course) {
 		Log.i(CourseDao.class.getName(), "Deleting course...");
 		try {
 			this.open();
@@ -119,8 +121,8 @@ public class CourseDao {
 					+ " = '" + id + "'", null);
 			this.close();
 		} catch (SQLException e) {
+			Log.e(CourseDao.class.getName(), "Couldn't delete course.", e);
 			this.close();
-			throw e;
 		}
 	}
 
@@ -128,58 +130,29 @@ public class CourseDao {
 	 * @return All courses.
 	 */
 	public List<Course> getAllCourses() {
+		List<Course> courses = new ArrayList<Course>();
 		try {
 			this.open();
-			List<Course> courses = new ArrayList<Course>();
 
 			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
 					CoursesTable.ALL_COLUMNS, null, null, null, null,
 					CoursesTable.COLUMN_NAME);
 
-			cursor.moveToFirst();
-
-			while (!cursor.isAfterLast()) {
-				Course course = cursorToCourse(cursor);
-				courses.add(course);
-				cursor.moveToNext();
+			if (cursor.moveToFirst()) {
+				while (!cursor.isAfterLast()) {
+					Course course = cursorToCourse(cursor);
+					courses.add(course);
+					cursor.moveToNext();
+				}
 			}
-
 			cursor.close();
 			close();
-			return courses;
 		} catch (SQLException e) {
 			Log.e(CourseDao.class.getName(),
 					"Error executing get all courses query. ", e);
 			this.close();
 		}
-		return null;
-	}
-
-	/**
-	 * Get course by id.
-	 * 
-	 * @param id
-	 *            id of the course.
-	 * @return Course entity or null if not found.
-	 */
-	public Course getCourseById(long id) {
-		try {
-			this.open();
-			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
-					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ID + " = '"
-							+ id + "'", null, null, null, null);
-
-			cursor.moveToFirst();
-			Course course = cursorToCourse(cursor);
-			cursor.close();
-			this.close();
-			return course;
-		} catch (SQLException e) {
-			Log.e(CourseDao.class.getName(),
-					"Error executing get course query. ", e);
-			this.close();
-		}
-		return null;
+		return courses;
 	}
 
 	/**
@@ -190,23 +163,24 @@ public class CourseDao {
 	 * @return Course entity or null if not found.
 	 */
 	public Course getCourseByAcronym(String acronym) {
+		Course course = null;
 		try {
 			this.open();
 			Cursor cursor = database.query(CoursesTable.TABLE_NAME,
 					CoursesTable.ALL_COLUMNS, CoursesTable.COLUMN_ACRONYM
 							+ " = '" + acronym + "'", null, null, null, null);
 
-			cursor.moveToFirst();
-			Course course = cursorToCourse(cursor);
+			if (cursor.moveToFirst()) {
+				course = cursorToCourse(cursor);
+			}
 			cursor.close();
 			this.close();
-			return course;
 		} catch (SQLException e) {
 			Log.e(CourseDao.class.getName(),
 					"Error executing get course query.", e);
 			this.close();
 		}
-		return null;
+		return course;
 	}
 
 	/** Turn a cursor to a Course entity */
@@ -237,20 +211,13 @@ public class CourseDao {
 	 * input class instance to the one returned by the db after the insertion,
 	 * i.e. assigns id
 	 */
-	public void insert(Course course) {
-		try {
-			this.open();
-			course = this.insert(course.getEuclid(), course.getAcronym(),
+	public Course insert(Course course) {
+		return this.insert(course.getEuclid(), course.getAcronym(),
 					course.getName(), course.getUrl(), course.getDrps(),
 					course.getAi(), course.getCg(), course.getCs(),
 					course.getSe(), course.getLevel(), course.getPoints(),
 					course.getYear(), course.getLecturer(),
 					course.getDeliveryPeriod());
-			this.close();
-		} catch (SQLException e) {
-			Log.e(CourseDao.class.getName(), "Couldn't insert new course.. ", e);
-			this.close();
-		}
 	}
 
 	/**
@@ -274,9 +241,8 @@ public class CourseDao {
 	 *         courses meet the criteria.
 	 */
 	public List<Course> getFilteredCourses(String search, boolean sem1,
-			boolean sem2,
-			boolean year1, boolean year2, boolean year3, boolean year4,
-			boolean year5) {
+			boolean sem2, boolean year1, boolean year2, boolean year3,
+			boolean year4, boolean year5) {
 		List<Course> courses = new ArrayList<Course>();
 		try {
 			String query = "SELECT ct.* FROM " + CoursesTable.TABLE_NAME
@@ -289,8 +255,7 @@ public class CourseDao {
 						+ "%') OR UPPER(ct." + CoursesTable.COLUMN_EUCLID
 						+ ") LIKE UPPER('%" + search + "%') OR UPPER(ct."
 						+ CoursesTable.COLUMN_LECTURER + ") LIKE UPPER('%"
-						+ search
-						+ "%'))";
+						+ search + "%'))";
 			}
 
 			if (!sem1) {
@@ -354,7 +319,6 @@ public class CourseDao {
 			}
 			cursor.close();
 			this.close();
-			return courses;
 		} catch (SQLException e) {
 			Log.e(CourseDao.class.getName(),
 					"Error executing get filtered courses query.", e);

@@ -106,7 +106,6 @@ public class AllCoursesActivity extends MenuActivity {
 		lbl.setText(course.getAcronym() + " - " + course.getName());
 
 		ImageButton btn = (ImageButton) view.findViewById(R.id.btnAddRemove);
-		btn.setImageResource(R.drawable.remove);
 
 		final String acronym = course.getAcronym();
 		// On click listener for the label

@@ -75,28 +75,32 @@ public class AvailabilityDao {
 		return this.insert(course.getAcronym(), year);
 	}
 
-	public void insert(Availability availability) throws SQLException {
-		availability = insert(availability.getCourse().getAcronym(),
+	public Availability insert(Availability availability) throws SQLException {
+		return insert(availability.getCourse().getAcronym(),
 				availability.getYear());
 	}
 
-	public Availability getAvailabilityById(long id) throws SQLException {
+	public Availability getAvailabilityByAcronym(String acronym) {
+		Availability availability = null;
 		try {
 			open();
 			Cursor cursor = database.query(AvailabilitiesTable.TABLE_NAME,
 					AvailabilitiesTable.ALL_COLUMNS,
-					AvailabilitiesTable.COLUMN_ID + " = '" + id + "'", null,
+					AvailabilitiesTable.COLUMN_COURSE + " = '" + acronym + "'",
+					null,
 					null, null, null);
 
 			cursor.moveToFirst();
-			Availability availability = cursorToAvailability(cursor);
+			availability = cursorToAvailability(cursor);
 			cursor.close();
 			close();
-			return availability;
 		} catch (SQLException e) {
+			Log.e(AvailabilityDao.class.getName(), "Couldn't get availability",
+					e);
 			close();
-			throw e;
+			
 		}
+		return availability;
 	}
 
 	/** Turn a cursor to an Availability entity */

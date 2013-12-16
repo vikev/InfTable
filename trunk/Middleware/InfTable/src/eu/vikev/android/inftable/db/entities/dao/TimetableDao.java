@@ -55,10 +55,12 @@ public class TimetableDao {
 		timetableEntry.setEnd(end);
 
 		String buildingName = cursor.getString(6);
+		timetableEntry.setBuildingName(buildingName);
 		Building building = buildingDao.getBuildingByName(buildingName);
 		timetableEntry.setBuilding(building);
 
 		String roomName = cursor.getString(7);
+		timetableEntry.setRoomName(roomName);
 		Room room = roomDao.getRoomByName(roomName);
 		timetableEntry.setRoom(room);
 		timetableEntry.setComment(cursor.getString(8));
@@ -118,8 +120,8 @@ public class TimetableDao {
 	 * Inserts the given TimetableEntry entity and changes the instance to the
 	 * new entity taken from the database.
 	 */
-	public void insert(TimetableEntry timetableEntry) {
-		timetableEntry = insert(timetableEntry.getCourse().getAcronym(),
+	public TimetableEntry insert(TimetableEntry timetableEntry) {
+		return insert(timetableEntry.getCourse().getAcronym(),
 				timetableEntry.getSemester(), timetableEntry.getDay(),
 				timetableEntry.getStart().toInt(), timetableEntry.getEnd()
 						.toInt(), timetableEntry.getBuilding().getName(),
@@ -133,25 +135,29 @@ public class TimetableDao {
 		try {
 			this.open();
 
+			String order = "CASE UPPER(day) WHEN 'MONDAY' THEN 1 WHEN 'TUESDAY' THEN 2 WHEN 'WEDNESDAY' THEN 3 WHEN 'THURSDAY' THEN 4 WHEN 'FRIDAY' THEN 5 ELSE 6 END ASC, start ASC";
+
 			Cursor cursor = database.query(TimetableTable.TABLE_NAME,
 					TimetableTable.ALL_COLUMNS, TimetableTable.COLUMN_COURSE
-							+ "= '" + acronym + "'", null, null, null, null);
+							+ "= '" + acronym + "'", null, null, null, order);
 
-			cursor.moveToFirst();
+			if (cursor.moveToFirst()) {
 
-			while (!cursor.isAfterLast()) {
-				TimetableEntry entry = cursorToTimetableEntry(cursor);
-				entries.add(entry);
-				cursor.moveToNext();
+				while (!cursor.isAfterLast()) {
+					TimetableEntry entry = cursorToTimetableEntry(cursor);
+					entries.add(entry);
+					cursor.moveToNext();
+				}
 			}
-
 			cursor.close();
 			this.close();
-			return entries;
+
 		} catch (SQLException e) {
+			Log.e(TimetableDao.class.getName(),
+					"Couldn't get timetable entries.", e);
 			this.close();
-			throw e;
 		}
+		return entries;
 	}
 
 }

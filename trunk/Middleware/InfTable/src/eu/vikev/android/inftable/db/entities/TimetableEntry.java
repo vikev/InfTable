@@ -10,7 +10,9 @@ public class TimetableEntry {
 	private Time start;
 	private Time end;
 	private Building building;
+	private String buildingName;
 	private Room room;
+	private String roomName;
 	private String comment;
 
 	public Long getId() {
@@ -92,6 +94,22 @@ public class TimetableEntry {
 				+ start.toString() + ", end=" + end.toString() + ", building="
 				+ building + ", room="
 				+ room + ", comment=" + comment + "]";
+	}
+
+	public String getBuildingName() {
+		return buildingName;
+	}
+
+	public void setBuildingName(String buildingName) {
+		this.buildingName = buildingName;
+	}
+
+	public String getRoomName() {
+		return roomName;
+	}
+
+	public void setRoomName(String roomName) {
+		this.roomName = roomName;
 	}
 
 }

@@ -63,8 +63,8 @@ public class BuildingDao {
 	 *            S2 - Semester 2; Other options would be disregarded.
 	 * @return The building with assigned id.
 	 */
-	public Building insert(String name, String description, String map)
-			throws SQLException {
+	public Building insert(String name, String description, String map) {
+		Building newBuilding = null;
 		try {
 			this.open();
 			ContentValues values = new ContentValues();
@@ -79,100 +79,67 @@ public class BuildingDao {
 					BuildingsTable.ALL_COLUMNS, BuildingsTable.COLUMN_ID
 							+ " = '" + insertId + "'", null, null, null, null);
 
-			cursor.moveToFirst();
-			Building newBuilding = cursorToBuilding(cursor);
+			if (cursor.moveToFirst()) {
+				newBuilding = cursorToBuilding(cursor);
+			}
 			cursor.close();
 			this.close();
-			return newBuilding;
 		} catch (SQLException e) {
+			Log.e(BuildingDao.class.getName(), "Couldn't insert building.", e);
 			this.close();
-			throw e;
 		}
+		return newBuilding;
 	}
 
-	/**
-	 * Delete given building.
-	 * 
-	 * @param building
-	 *            building instance.
-	 */
-	public void delete(Building building) throws SQLException {
-		Log.i(BuildingDao.class.getName(), "Deleting building...");
-		try {
-			this.open();
-			long id = building.getId();
 
-			database.delete(BuildingsTable.TABLE_NAME, BuildingsTable.COLUMN_ID
-					+ " = '" + id + "'", null);
-			this.close();
-		} catch (SQLException e) {
-			this.close();
-			throw e;
-		}
-	}
 
 	/**
 	 * @return All buildings.
 	 */
 	public List<Building> getAllBuildings() throws SQLException {
+		List<Building> buildings = new ArrayList<Building>();
 		try {
 			this.open();
-			List<Building> buildings = new ArrayList<Building>();
 
 			Cursor cursor = database.query(BuildingsTable.TABLE_NAME,
 					BuildingsTable.ALL_COLUMNS, null, null, null, null, null);
 
-			cursor.moveToFirst();
+			if (cursor.moveToFirst()) {
 
-			while (!cursor.isAfterLast()) {
-				Building building = cursorToBuilding(cursor);
-				buildings.add(building);
-				cursor.moveToNext();
+				while (!cursor.isAfterLast()) {
+					Building building = cursorToBuilding(cursor);
+					buildings.add(building);
+					cursor.moveToNext();
+				}
 			}
-
 			cursor.close();
 			this.close();
-			return buildings;
 		} catch (SQLException e) {
+			Log.e(BuildingDao.class.getName(), "Couldn't get all buildings.", e);
 			this.close();
-			throw e;
 		}
+		return buildings;
 	}
 
-	public Building getBuildingById(long id) throws SQLException {
-		try {
-			this.open();
-			Cursor cursor = database.query(BuildingsTable.TABLE_NAME,
-					BuildingsTable.ALL_COLUMNS, BuildingsTable.COLUMN_ID
-							+ " = '" + id + "'", null, null, null, null);
 
-			cursor.moveToFirst();
-			Building building = cursorToBuilding(cursor);
-			cursor.close();
-			close();
-			return building;
-		} catch (SQLException e) {
-			this.close();
-			throw e;
-		}
-	}
-
-	public Building getBuildingByName(String name) throws SQLException {
+	public Building getBuildingByName(String name) {
+		Building building = null;
 		try {
 			this.open();
 			Cursor cursor = database.query(BuildingsTable.TABLE_NAME,
 					BuildingsTable.ALL_COLUMNS, BuildingsTable.COLUMN_NAME
 							+ " = '" + name + "'", null, null, null, null);
 
-			cursor.moveToFirst();
-			Building building = cursorToBuilding(cursor);
+			if (cursor.moveToFirst()) {
+				building = cursorToBuilding(cursor);
+			}
 			cursor.close();
 			close();
-			return building;
 		} catch (SQLException e) {
+			Log.e(BuildingDao.class.getName(), "Couldn't get building.", e);
 			this.close();
-			throw e;
 		}
+		return building;
 	}
 
 	/** Turn a cursor to a Building entity */
@@ -187,8 +154,8 @@ public class BuildingDao {
 		return building;
 	}
 
-	public void insert(Building building) {
-		building = this.insert(building.getName(), building.getDescription(),
+	public Building insert(Building building) {
+		return this.insert(building.getName(), building.getDescription(),
 				building.getMap());
 	}
 }
