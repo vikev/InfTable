@@ -5,12 +5,16 @@
         android:title="@string/home">
     </item>
     <item
-        android:id="@+id/menu_all_courses"
-        android:title="@string/all_courses">
-    </item>
-    <item
         android:id="@+id/menu_timetable"
         android:title="@string/my_timetable">
+    </item>
+   <item
+        android:id="@+id/menu_my_courses"
+        android:title="@string/my_courses">
+    </item>
+    <item
+        android:id="@+id/menu_all_courses"
+        android:title="@string/all_courses">
     </item>
 
 </menu>

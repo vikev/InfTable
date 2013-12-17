@@ -59,5 +59,8 @@
     <string name="title_activity_timetable">TimetableActivity</string>
     <string name="my_timetable">My timetable</string>
     <string name="my_timetable_subtitle">Show a timetable with my courses</string>
+    <string name="title_activity_my_courses">MyCoursesActivity</string>
+    <string name="my_courses">My courses</string>
+    <string name="my_courses_subtitle">See and remove courses</string>
     
 </resources>

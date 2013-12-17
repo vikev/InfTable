@@ -33,6 +33,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="55dp"
+            android:onClick="showMyCoursesActivity"
+            android:clickable="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/my_courses"
+                android:textSize="25sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/my_courses_subtitle"
+                android:textSize="16sp" />
+            
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
             android:onClick="showAllCoursesActivity"
             android:focusable="true"
             android:focusableInTouchMode="true"

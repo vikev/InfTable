@@ -12,6 +12,7 @@ import android.util.Log;
 import eu.vikev.android.inftable.db.AvailabilitiesTable;
 import eu.vikev.android.inftable.db.CoursesTable;
 import eu.vikev.android.inftable.db.DBHelper;
+import eu.vikev.android.inftable.db.MyCoursesTable;
 import eu.vikev.android.inftable.db.entities.Course;
 
 public class CourseDao {
@@ -213,11 +214,10 @@ public class CourseDao {
 	 */
 	public Course insert(Course course) {
 		return this.insert(course.getEuclid(), course.getAcronym(),
-					course.getName(), course.getUrl(), course.getDrps(),
-					course.getAi(), course.getCg(), course.getCs(),
-					course.getSe(), course.getLevel(), course.getPoints(),
-					course.getYear(), course.getLecturer(),
-					course.getDeliveryPeriod());
+				course.getName(), course.getUrl(), course.getDrps(),
+				course.getAi(), course.getCg(), course.getCs(), course.getSe(),
+				course.getLevel(), course.getPoints(), course.getYear(),
+				course.getLecturer(), course.getDeliveryPeriod());
 	}
 
 	/**
@@ -322,6 +322,41 @@ public class CourseDao {
 		} catch (SQLException e) {
 			Log.e(CourseDao.class.getName(),
 					"Error executing get filtered courses query.", e);
+			this.close();
+		}
+
+		return courses;
+	}
+
+	/**
+	 * @return List with all my courses ardered by name.
+	 */
+	public List<Course> getAllMyCourses() {
+		List<Course> courses = new ArrayList<Course>();
+
+		try {
+			this.open();
+			String query = "SELECT * FROM " + CoursesTable.TABLE_NAME
+					+ " WHERE " + CoursesTable.COLUMN_ACRONYM + " IN (SELECT "
+					+ MyCoursesTable.COLUMN_COURSE + " AS "
+					+ CoursesTable.COLUMN_ACRONYM + " FROM "
+					+ MyCoursesTable.TABLE_NAME + ") ORDER BY "
+					+ CoursesTable.COLUMN_NAME;
+
+			Cursor cursor = database.rawQuery(query, null);
+
+			if (cursor.moveToFirst()) {
+
+				while (!cursor.isAfterLast()) {
+					Course course = cursorToCourse(cursor);
+					courses.add(course);
+					cursor.moveToNext();
+				}
+			}
+			cursor.close();
+			this.close();
+		} catch (SQLException e) {
+			Log.e(MyCourseDao.class.getName(), "Couldn't get my courses.", e);
 			this.close();
 		}
 
