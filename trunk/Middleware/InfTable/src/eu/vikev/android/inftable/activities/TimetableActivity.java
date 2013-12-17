@@ -166,7 +166,7 @@ public class TimetableActivity extends MenuActivity {
 
 			String courseAndLocation = "<b>" + entry.getCourse().getName()
 					+ "</b>";
-			courseAndLocation += "<br/>Building: ";
+			courseAndLocation += "<br/>&nbsp;&nbsp;&nbsp;Building: ";
 			Building building = entry.getBuilding();
 			if (building != null) {
 				courseAndLocation += "<a href=\"" + building.getMap() + "\">";
@@ -177,7 +177,7 @@ public class TimetableActivity extends MenuActivity {
 			}
 
 			Room room = entry.getRoom();
-			courseAndLocation += " Room: ";
+			courseAndLocation += "<br/>&nbsp;&nbsp;&nbsp;Room: ";
 			if (room != null) {
 				courseAndLocation += room.getDescription();
 			} else {
@@ -185,6 +185,10 @@ public class TimetableActivity extends MenuActivity {
 			}
 
 
+			if (!"".equals(entry.getComment())) {
+				courseAndLocation += "<br/>&nbsp;&nbsp;&nbsp;"
+						+ entry.getComment();
+			}
 
 			TextView lecture = new TextView(this);
 			lecture.setText(Html.fromHtml(courseAndLocation));

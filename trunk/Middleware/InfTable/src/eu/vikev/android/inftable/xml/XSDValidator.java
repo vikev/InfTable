@@ -20,6 +20,15 @@ import org.webpki.android.org.apache.xerces.jaxp.validation.XMLSchemaFactory;
 import android.util.Log;
 
 public class XSDValidator {
+	/**
+	 * Validate xml file agains XSD
+	 * 
+	 * @param doc
+	 *            xml Document
+	 * @param xsd
+	 *            xsd Document
+	 * @return
+	 */
 	public static boolean isXmlValid(Document doc, InputStream xsd) {
 		try {
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

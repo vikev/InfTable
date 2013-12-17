@@ -29,6 +29,13 @@ public class AvailabilityDao {
 		dbHelper.close();
 	}
 
+	/**
+	 * Insert new availability of a course
+	 * 
+	 * @param courseAcronym
+	 * @param year
+	 * @return
+	 */
 	public Availability insert(String courseAcronym, int year) {
 		Availability newAvailability = null;
 		try {
@@ -71,11 +78,19 @@ public class AvailabilityDao {
 		return newAvailability;
 	}
 
-	public Availability insert(Course course, int year) throws SQLException {
+	/**
+	 * Insert new availability of a course.
+	 * 
+	 * @param course
+	 * @param year
+	 * @return
+	 * @throws SQLException
+	 */
+	public Availability insert(Course course, int year) {
 		return this.insert(course.getAcronym(), year);
 	}
 
-	public Availability insert(Availability availability) throws SQLException {
+	public Availability insert(Availability availability) {
 		return insert(availability.getCourse().getAcronym(),
 				availability.getYear());
 	}

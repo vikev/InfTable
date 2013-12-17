@@ -8,6 +8,9 @@ import eu.vikev.android.inftable.activities.AllCoursesActivity;
 import eu.vikev.android.inftable.activities.MainActivity;
 import eu.vikev.android.inftable.activities.TimetableActivity;
 
+/**
+ * Same menu for all activities.
+ */
 public abstract class MenuActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

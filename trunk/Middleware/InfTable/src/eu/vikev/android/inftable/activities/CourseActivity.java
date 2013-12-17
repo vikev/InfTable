@@ -161,7 +161,7 @@ public class CourseActivity extends MenuActivity {
 			String timeAndLocation = entry.getStart().toString();
 			timeAndLocation += " - ";
 			timeAndLocation += entry.getEnd().toString();
-			timeAndLocation += " Building: ";
+			timeAndLocation += "<br/>&nbsp;&nbsp;&nbsp;Building: ";
 			Building building = entry.getBuilding();
 			if (building != null) {
 				timeAndLocation += "<a href=\"" + building.getMap()
@@ -173,11 +173,15 @@ public class CourseActivity extends MenuActivity {
 			}
 
 			Room room = entry.getRoom();
-			timeAndLocation += " Room: ";
+			timeAndLocation += "<br/>&nbsp;&nbsp;&nbsp;Room: ";
 			if (room != null) {
 				timeAndLocation += room.getDescription();
 			} else {
 				timeAndLocation += entry.getRoomName();
+			}
+			if (!"".equals(entry.getComment())) {
+				timeAndLocation += "<br/>&nbsp;&nbsp;&nbsp;"
+						+ entry.getComment();
 			}
 
 			TextView slot = new TextView(this);

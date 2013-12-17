@@ -32,8 +32,8 @@ public class UpdateActivity extends Activity {
 
 		setContentView(R.layout.activity_update);
 
-		pref = this.getSharedPreferences(
-				"eu.vikev.android.inftable", Context.MODE_PRIVATE);
+		pref = this.getSharedPreferences("eu.vikev.android.inftable",
+				Context.MODE_PRIVATE);
 
 		editCoursesURL = (EditText) findViewById(R.id.input_path_to_courses);
 		editVenuesURL = (EditText) findViewById(R.id.input_path_to_venues);
@@ -55,11 +55,6 @@ public class UpdateActivity extends Activity {
 
 		firstRun = pref.getBoolean("firstRun", true);
 
-		if (!pref.getBoolean("firstRun", false)) {
-			Button cancle = (Button) findViewById(R.id.btn_update_cancle);
-			cancle.setVisibility(View.GONE);
-		}
-
 		Button btnUpdate = (Button) findViewById(R.id.btn_update_download);
 
 		btnUpdate.setOnClickListener(new OnClickListener() {
@@ -75,7 +70,7 @@ public class UpdateActivity extends Activity {
 		builder.setTitle("Attention");
 		String alert = "";
 		if (!firstRun) {
-			alert = " IF you proceed all data would be deleted and the app would be unusable until successful download of the xml files.";
+			alert = " If you proceed all data would be deleted and the app would be unusable until successful download of the xml files. Relax! My courses would be preserved.";
 		}
 		builder.setMessage("To download the xml files an active internet connection is needed. Please bare in mind that charges may occur."
 				+ alert);

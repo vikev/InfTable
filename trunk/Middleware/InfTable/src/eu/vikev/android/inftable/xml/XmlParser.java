@@ -187,7 +187,7 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			Log.e(XmlParser.class.getName(), "Parsing venues.xml error: " + e);
 			return false;
 		} catch (Exception e) {
-			errorMsg = "Error occured while parsing venues.xml.";
+			errorMsg = "Error occured while parsing venues.xml. Worng xml structure.";
 			Log.e(XmlParser.class.getName(), "Getting venues error: " + e);
 			return false;
 		}
@@ -282,7 +282,7 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 			Log.e(XmlParser.class.getName(), "Parsing courses.xml error: " + e);
 			return false;
 		} catch (Exception e) {
-			errorMsg = "Error occured while parsing courses.xml.";
+			errorMsg = "Error occured while parsing courses.xml. Worng xml structure.";
 			Log.e(XmlParser.class.getName(), "Getting courses error: " + e);
 			return false;
 		}
@@ -384,7 +384,7 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 					+ e);
 			return false;
 		} catch (Exception e) {
-			errorMsg = "Error occured while parsing timetable.xml.";
+			errorMsg = "Error occured while parsing timetable.xml. Worng xml structure.";
 			Log.e(XmlParser.class.getName(), "Getting timetable error: " + e);
 			return false;
 		}

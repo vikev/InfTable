@@ -26,6 +26,15 @@ public class RoomDao {
 		dbHelper.close();
 	}
 
+	/**
+	 * Insert new room
+	 * 
+	 * @param name
+	 *            Room name
+	 * @param description
+	 *            Room description
+	 * @return The Room with id assigned.
+	 */
 	public Room insert(String name, String description) {
 		Room newRoom = null;
 		try {
@@ -53,91 +62,25 @@ public class RoomDao {
 		return newRoom;
 	}
 
+	/**
+	 * Insert new room
+	 * 
+	 * @param room
+	 *            Room entity
+	 * @return The Room with id assigned
+	 * @throws SQLException
+	 */
 	public Room insert(Room room) throws SQLException {
 		return this.insert(room.getName(), room.getDescription());
 	}
 
-	// /**
-	// * Delete given room.
-	// *
-	// * @param room
-	// * room instance.
-	// */
-	// public void delete(Room room) throws SQLException {
-	// Log.i(RoomDao.class.getName(), "Deleting room...");
-	// try {
-	// this.open();
-	// long id = room.getId();
-	//
-	// database.delete(RoomsTable.TABLE_NAME, RoomsTable.COLUMN_ID
-	// + " = '" + id + "'", null);
-	// this.close();
-	// } catch (SQLException e) {
-	// this.close();
-	// throw e;
-	// }
-	// }
-
-	// TODO: delete
-	// /**
-	// * @return All rooms.
-	// */
-	// public List<Room> getAllRooms() throws SQLException {
-	// try {
-	// this.open();
-	// List<Room> rooms = new ArrayList<Room>();
-	//
-	// Cursor cursor = database.query(RoomsTable.TABLE_NAME,
-	// RoomsTable.ALL_COLUMNS, null, null, null, null, null);
-	//
-	// cursor.moveToFirst();
-	//
-	// while (!cursor.isAfterLast()) {
-	// Room room = cursorToRoom(cursor);
-	// rooms.add(room);
-	// cursor.moveToNext();
-	// }
-	//
-	// cursor.close();
-	// this.close();
-	// return rooms;
-	// } catch (SQLException e) {
-	// this.close();
-	// throw e;
-	// }
-	// }
-
-	// /**
-	// * @return Get rooms corresponding to certain conditions.
-	// */
-	// public List<Room> getRooms(String selection) {
-	// try {
-	// this.open();
-	// List<Room> rooms = new ArrayList<Room>();
-	//
-	// Cursor cursor = database.query(RoomsTable.TABLE_NAME,
-	// RoomsTable.ALL_COLUMNS, selection, null, null, null, null);
-	//
-	// cursor.moveToFirst();
-	//
-	// while (!cursor.isAfterLast()) {
-	// Room room = cursorToRoom(cursor);
-	// rooms.add(room);
-	// cursor.moveToNext();
-	// }
-	//
-	// cursor.close();
-	// this.close();
-	// return rooms;
-	// } catch (SQLException e) {
-	// Log.e(RoomDao.class.getName(), "Error in getRooms query: " + e);
-	// this.close();
-	// }
-	// return null;
-	// }
-
-	
-
+	/**
+	 * Get a room.
+	 * 
+	 * @param name
+	 *            Room name
+	 * @return Room entity
+	 */
 	public Room getRoomByName(String name) {
 		Room room = null;
 		try {

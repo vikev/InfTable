@@ -67,8 +67,7 @@ public class CourseDao {
 	 */
 	public Course insert(String euclid, String acronym, String name,
 			String url, String drps, int ai, int cg, int cs, int se, int level,
-			int points, int year, String lecturer, String deliveryPeriod)
-			throws SQLException {
+			int points, int year, String lecturer, String deliveryPeriod) {
 		Course newCourse = null;
 		try {
 			this.open();

@@ -96,7 +96,7 @@ public class BuildingDao {
 	/**
 	 * @return All buildings.
 	 */
-	public List<Building> getAllBuildings() throws SQLException {
+	public List<Building> getAllBuildings() {
 		List<Building> buildings = new ArrayList<Building>();
 		try {
 			this.open();
@@ -121,7 +121,12 @@ public class BuildingDao {
 		return buildings;
 	}
 
-
+	/**
+	 * Get a building by its name.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public Building getBuildingByName(String name) {
 		Building building = null;
 		try {

@@ -76,6 +76,12 @@ public class AllCoursesActivity extends MenuActivity {
 
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		update(null);
+	}
+
 	/** Get a list with the courses */
 	private void getCourses() {
 		List<Course> courses = courseDao.getFilteredCourses(search, sem1, sem2,
@@ -153,33 +159,33 @@ public class AllCoursesActivity extends MenuActivity {
 	public void update(View v) {
 		Log.i(AllCoursesActivity.class.getName(),
 				"Updating the list with courses.");
-
-		switch (v.getId()) {
-		case R.id.editText_search:
-			search = ((EditText) v).getText().toString();
-			break;
-		case R.id.toggleButton_sem1:
-			sem1 = !sem1;
-			break;
-		case R.id.toggleButton_sem2:
-			sem2 = !sem2;
-			break;
-		case R.id.toggleButton_year1:
-			year1 = !year1;
-			break;
-		case R.id.toggleButton_year2:
-			year2 = !year2;
-			break;
-		case R.id.toggleButton_year3:
-			year3 = !year3;
-			break;
-		case R.id.toggleButton_year4:
-			year4 = !year4;
-			break;
-		case R.id.toggleButton_year5:
-			year5 = !year5;
-			break;
-
+		if (v != null) {
+			switch (v.getId()) {
+			case R.id.editText_search:
+				search = ((EditText) v).getText().toString();
+				break;
+			case R.id.toggleButton_sem1:
+				sem1 = !sem1;
+				break;
+			case R.id.toggleButton_sem2:
+				sem2 = !sem2;
+				break;
+			case R.id.toggleButton_year1:
+				year1 = !year1;
+				break;
+			case R.id.toggleButton_year2:
+				year2 = !year2;
+				break;
+			case R.id.toggleButton_year3:
+				year3 = !year3;
+				break;
+			case R.id.toggleButton_year4:
+				year4 = !year4;
+				break;
+			case R.id.toggleButton_year5:
+				year5 = !year5;
+				break;
+			}
 		}
 
 		LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout_all_courses);

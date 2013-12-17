@@ -162,6 +162,15 @@ public class TimetableDao {
 		return entries;
 	}
 
+	/**
+	 * Get the timetable for a specific day and semester
+	 * 
+	 * @param sem
+	 *            Should be 1 or 2
+	 * @param day
+	 *            Should be one of the day codes of {@link java.util.Calendar}.
+	 * @return List with times of lectures in that day ordered by time.
+	 */
 	public List<TimetableEntry> getMyTimetableForDay(int sem, int day) {
 		List<TimetableEntry> entries = new ArrayList<TimetableEntry>();
 		String selection = TimetableTable.COLUMN_SEMESTER + "=" + sem;

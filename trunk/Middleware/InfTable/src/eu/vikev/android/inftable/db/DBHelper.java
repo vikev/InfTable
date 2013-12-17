@@ -34,12 +34,7 @@ public class DBHelper extends SQLiteOpenHelper {
 			database.execSQL(TimetableTable.TRIGGER_FKI_COURSE);
 			Log.i(CoursesTable.class.getName(),
 					"FK trigger timetable.course->courses.acronym created.");
-			// database.execSQL(TimetableTable.TRIGGER_FKI_BUILDING);
-			// Log.i(CoursesTable.class.getName(),
-			// "FK trigger timetable.building->building.name created.");
-			// database.execSQL(TimetableTable.TRIGGER_FKI_ROOM);
-			// Log.i(CoursesTable.class.getName(),
-			// "FK trigger timetable.room->rooms.name created.");
+
 			database.execSQL(MyCoursesTable.TABLE_CREATE);
 			Log.i(CoursesTable.class.getName(), "Table mycourses created.");
 			database.execSQL(MyCoursesTable.TRIGGER_FKI_COURSE);
