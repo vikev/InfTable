@@ -26,13 +26,13 @@ import android.util.Log;
 import eu.vikev.android.inftable.R;
 import eu.vikev.android.inftable.activities.MainActivity;
 import eu.vikev.android.inftable.custom.Time;
-import eu.vikev.android.inftable.db.DBHelper;
 import eu.vikev.android.inftable.db.entities.Building;
 import eu.vikev.android.inftable.db.entities.Course;
 import eu.vikev.android.inftable.db.entities.Room;
 import eu.vikev.android.inftable.db.entities.dao.AvailabilityDao;
 import eu.vikev.android.inftable.db.entities.dao.BuildingDao;
 import eu.vikev.android.inftable.db.entities.dao.CourseDao;
+import eu.vikev.android.inftable.db.entities.dao.DbUpdateDao;
 import eu.vikev.android.inftable.db.entities.dao.RoomDao;
 import eu.vikev.android.inftable.db.entities.dao.TimetableDao;
 
@@ -44,6 +44,7 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 	private RoomDao roomDao;
 	private TimetableDao timetableDao;
 	private AvailabilityDao availabilityDao;
+	private DbUpdateDao dbUpdaterDao;
 
 	private Context context;
 	private ProgressDialog dialog;
@@ -55,29 +56,33 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 		roomDao = new RoomDao(context);
 		timetableDao = new TimetableDao(context);
 		availabilityDao = new AvailabilityDao(context);
+		dbUpdaterDao = new DbUpdateDao(context);
 		dialog = new ProgressDialog(context);
 	}
 
 	protected void onPreExecute() {
+		dbUpdaterDao.deleteDB();
 		dialog.setCancelable(false);
 		dialog.setMessage("Downloading data... Please wait.");
 		dialog.show();
 	}
 
 	protected Boolean doInBackground(String... urls) {
+		SharedPreferences pref = context.getSharedPreferences(
+				"eu.vikev.android.inftable", Context.MODE_PRIVATE);
+		Editor editor = pref.edit();
 		if (getVenues(urls[0]) && getCourses(urls[1]) && getTimetable(urls[2])) {
-			SharedPreferences pref = context.getSharedPreferences(
-					"eu.vikev.android.inftable", Context.MODE_PRIVATE);
-			Editor editor = pref.edit();
 			editor.putBoolean("firstRun", false);
 			editor.commit();
 			dialog.dismiss();
+			dbUpdaterDao.removeObsolateMyCourses();
 			context.startActivity(new Intent(context, MainActivity.class));
 			((Activity) context).finish();
 			return true;
 		}
 		Log.e(XmlParser.class.getName(), "Couldn't get the necessary data.");
-		context.deleteDatabase(DBHelper.DATABASE_NAME);
+		editor.putBoolean("firstRun", true);
+		editor.commit();
 		dialog.dismiss();
 		return false;
 	}

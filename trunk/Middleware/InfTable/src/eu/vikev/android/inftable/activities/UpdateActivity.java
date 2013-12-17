@@ -22,6 +22,7 @@ public class UpdateActivity extends Activity {
 	EditText editCoursesURL;
 	EditText editVenuesURL;
 	EditText editTimetableURL;
+	private boolean firstRun;
 
 	private Context context = this;
 
@@ -52,6 +53,8 @@ public class UpdateActivity extends Activity {
 						"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml");
 		editTimetableURL.setText(timetable);
 
+		firstRun = pref.getBoolean("firstRun", true);
+
 		if (!pref.getBoolean("firstRun", false)) {
 			Button cancle = (Button) findViewById(R.id.btn_update_cancle);
 			cancle.setVisibility(View.GONE);
@@ -70,7 +73,12 @@ public class UpdateActivity extends Activity {
 	private void openConfirmationDialog() {
 		Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Attention");
-		builder.setMessage("To download the xml files an active internet connection is needed. Please bare in mind that charges may occur.");
+		String alert = "";
+		if (!firstRun) {
+			alert = " IF you proceed all data would be deleted and the app would be unusable until successful download of the xml files.";
+		}
+		builder.setMessage("To download the xml files an active internet connection is needed. Please bare in mind that charges may occur."
+				+ alert);
 		builder.setCancelable(true);
 		builder.setNegativeButton("No, please exit",
 				new CancelOnClickListener());

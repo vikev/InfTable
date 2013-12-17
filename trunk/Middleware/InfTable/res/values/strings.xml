@@ -62,5 +62,7 @@
     <string name="title_activity_my_courses">MyCoursesActivity</string>
     <string name="my_courses">My courses</string>
     <string name="my_courses_subtitle">See and remove courses</string>
+    <string name="label_update_database">Update database</string>
+    <string name="label_update_database_subtitle">Update courses, timetables and venues</string>
     
 </resources>

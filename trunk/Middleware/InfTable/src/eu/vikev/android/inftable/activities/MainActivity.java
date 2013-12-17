@@ -10,15 +10,27 @@ import android.view.View;
 import eu.vikev.android.inftable.R;
 
 public class MainActivity extends Activity {
-
+	private SharedPreferences pref;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i(MainActivity.class.getName(), "MainActivity is opening!");
 		super.onCreate(savedInstanceState);
 
-		SharedPreferences pref = this.getSharedPreferences(
+		pref = this.getSharedPreferences(
 				"eu.vikev.android.inftable", Context.MODE_PRIVATE);
 
+		checkFirstTime();
+
+		setContentView(R.layout.activity_main);
+		Log.i(MainActivity.class.getName(), "MainActivity opened!");
+	}
+
+	@Override
+	protected void onResume() {
+		checkFirstTime();
+	}
+
+	private void checkFirstTime() {
 		if (pref.getBoolean("firstRun", true)) {
 			Log.i(MainActivity.class.getName(),
 					"This is the first run. Bringing update activity to the front.");
@@ -26,16 +38,7 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 			finish();
 		}
-
-		setContentView(R.layout.activity_main);
-		Log.i(MainActivity.class.getName(), "MainActivity opened!");
 	}
-
-	/*
-	 * @Override public boolean onCreateOptionsMenu(Menu menu) { // Inflate the
-	 * menu; this adds items to the action bar if it is present.
-	 * getMenuInflater().inflate(R.menu.main, menu); return true; }
-	 */
 
 	/**
 	 * On click open AllCourses activity.
@@ -47,14 +50,33 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 	}
 
+	/**
+	 * On click open Timatable activity.
+	 * 
+	 * @param v
+	 */
 	public void showTimetableActivity(View v) {
 		Intent intent = new Intent(MainActivity.this, TimetableActivity.class);
 		startActivity(intent);
 	}
 
+	/**
+	 * On click open MyCourses activity.
+	 * 
+	 * @param v
+	 */
 	public void showMyCoursesActivity(View v) {
 		Intent intent = new Intent(MainActivity.this, MyCoursesActivity.class);
 		startActivity(intent);
 	}
 
+	/**
+	 * On click open Update activity.
+	 * 
+	 * @param v
+	 */
+	public void showUpdateActivity(View v) {
+		Intent intent = new Intent(MainActivity.this, UpdateActivity.class);
+		startActivity(intent);
+	}
 }
