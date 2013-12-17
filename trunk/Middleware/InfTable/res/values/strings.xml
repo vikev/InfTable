@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="red">#FF0000</color>
+
+    <color name="red">#FF0000</color>
     <color name="green">#00A300</color>
     <color name="black">#000000</color>
-    
+
     <string name="app_name">InfTable</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
@@ -31,29 +32,32 @@
     <string name="year3">Year 3</string>
     <string name="year4">Year 4</string>
     <string name="year5">Year 5</string>
-	<string name="search_hint">Search by name, code or lecturer.</string>
-	<string name="clear">Clear</string>
-	<string name="add_remove_course">Add/Remove course to/from my courses.</string>
-	<string name="ai">AI</string>
-	<string name="cg">CG</string>
-	<string name="cs">CS</string>
-	<string name="se">SE</string>
-	<string name="course_webpage">Course webpage:</string>
-	<string name="drps">DRPS:</string>
-	<string name="timetable">Timetable</string>
-	<string name="t900"> 9:00</string>
-	<string name="t1000">10:00</string>
-	<string name="t1110">11:10</string>
-	<string name="t1210">12:10</string>
-	<string name="t1310">13:10</string>
-	<string name="t1410">14:10</string>
-	<string name="t1510">15:10</string>
-	<string name="t1610">16:10</string>
-	<string name="t1710">17:10</string>
-	<string name="mon">Mon</string>
-	<string name="tue">Tue</string>
-	<string name="wed">Wed</string>
-	<string name="thu">Thu</string>
-	<string name="fri">Fri</string>
-	
+    <string name="search_hint">Search by name, code or lecturer.</string>
+    <string name="clear">Clear</string>
+    <string name="add_remove_course">Add/Remove course to/from my courses.</string>
+    <string name="ai">AI</string>
+    <string name="cg">CG</string>
+    <string name="cs">CS</string>
+    <string name="se">SE</string>
+    <string name="course_webpage">Course webpage:</string>
+    <string name="drps">DRPS:</string>
+    <string name="timetable">Timetable</string>
+    <string name="t900"> 9:00</string>
+    <string name="t1000">10:00</string>
+    <string name="t1110">11:10</string>
+    <string name="t1210">12:10</string>
+    <string name="t1310">13:10</string>
+    <string name="t1410">14:10</string>
+    <string name="t1510">15:10</string>
+    <string name="t1610">16:10</string>
+    <string name="t1710">17:10</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="title_activity_timetable">TimetableActivity</string>
+    <string name="my_timetable">My timetable</string>
+    <string name="my_timetable_subtitle">Show a timetable with my courses</string>
+    
 </resources>

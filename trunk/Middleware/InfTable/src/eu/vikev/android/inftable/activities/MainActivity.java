@@ -47,5 +47,10 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 	}
 
+	public void showTimetableActivity(View v) {
+		Intent intent = new Intent(MainActivity.this, TimetableActivity.class);
+		startActivity(intent);
+	}
+
 
 }

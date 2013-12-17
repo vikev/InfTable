@@ -36,6 +36,10 @@
             android:name="eu.vikev.android.inftable.activities.CourseActivity"
             android:label="@string/title_activity_course" >
         </activity>
+        <activity
+            android:name="eu.vikev.android.inftable.activities.TimetableActivity"
+            android:label="@string/title_activity_timetable" >
+        </activity>
     </application>
 
 </manifest>

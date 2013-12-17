@@ -1,6 +1,7 @@
 package eu.vikev.android.inftable.db.entities.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -11,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import eu.vikev.android.inftable.custom.Time;
 import eu.vikev.android.inftable.db.DBHelper;
+import eu.vikev.android.inftable.db.MyCoursesTable;
 import eu.vikev.android.inftable.db.TimetableTable;
 import eu.vikev.android.inftable.db.entities.Building;
 import eu.vikev.android.inftable.db.entities.Room;
@@ -20,6 +22,8 @@ public class TimetableDao {
 	private SQLiteDatabase database;
 	private DBHelper dbHelper;
 	private Context context;
+
+	public static final String ORDER = "CASE UPPER(day) WHEN 'MONDAY' THEN 1 WHEN 'TUESDAY' THEN 2 WHEN 'WEDNESDAY' THEN 3 WHEN 'THURSDAY' THEN 4 WHEN 'FRIDAY' THEN 5 ELSE 6 END ASC, start, course ASC";
 
 	public TimetableDao(Context context) {
 		this.context = context;
@@ -135,11 +139,9 @@ public class TimetableDao {
 		try {
 			this.open();
 
-			String order = "CASE UPPER(day) WHEN 'MONDAY' THEN 1 WHEN 'TUESDAY' THEN 2 WHEN 'WEDNESDAY' THEN 3 WHEN 'THURSDAY' THEN 4 WHEN 'FRIDAY' THEN 5 ELSE 6 END ASC, start ASC";
-
 			Cursor cursor = database.query(TimetableTable.TABLE_NAME,
 					TimetableTable.ALL_COLUMNS, TimetableTable.COLUMN_COURSE
-							+ "= '" + acronym + "'", null, null, null, order);
+							+ "= '" + acronym + "'", null, null, null, ORDER);
 
 			if (cursor.moveToFirst()) {
 
@@ -157,6 +159,58 @@ public class TimetableDao {
 					"Couldn't get timetable entries.", e);
 			this.close();
 		}
+		return entries;
+	}
+
+	public List<TimetableEntry> getMyTimetableForDay(int sem, int day) {
+		List<TimetableEntry> entries = new ArrayList<TimetableEntry>();
+		String selection = TimetableTable.COLUMN_SEMESTER + "=" + sem;
+		String selectDay = "UPPER(" + TimetableTable.COLUMN_DAY + ")='";
+		switch (day) {
+		case Calendar.MONDAY:
+			selectDay += "MONDAY";
+			break;
+		case Calendar.TUESDAY:
+			selectDay += "TUESDAY";
+			break;
+		case Calendar.WEDNESDAY:
+			selectDay += "WEDNESDAY";
+			break;
+		case Calendar.THURSDAY:
+			selectDay += "THURSDAY";
+			break;
+		case Calendar.FRIDAY:
+			selectDay += "FRIDAY";
+			break;
+		default:
+			selectDay += "MONDAY";
+		}
+		selectDay += "'";
+		selection += " AND " + selectDay;
+		try {
+			this.open();
+			String query = "SELECT * FROM " + TimetableTable.TABLE_NAME
+					+ " WHERE course IN (SELECT course FROM "
+					+ MyCoursesTable.TABLE_NAME + ") AND " + selection
+					+ " ORDER BY " + ORDER;
+
+			Cursor cursor = database.rawQuery(query, null);
+
+			if (cursor.moveToFirst()) {
+
+				while (!cursor.isAfterLast()) {
+					TimetableEntry entry = cursorToTimetableEntry(cursor);
+					entries.add(entry);
+					cursor.moveToNext();
+				}
+			}
+			cursor.close();
+			this.close();
+		} catch (SQLException e) {
+			Log.e(MyCourseDao.class.getName(), "Couldn't get timetable.", e);
+			this.close();
+		}
+
 		return entries;
 	}
 

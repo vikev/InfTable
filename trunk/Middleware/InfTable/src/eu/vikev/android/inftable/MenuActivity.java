@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import eu.vikev.android.inftable.activities.AllCoursesActivity;
 import eu.vikev.android.inftable.activities.MainActivity;
+import eu.vikev.android.inftable.activities.TimetableActivity;
 
 public abstract class MenuActivity extends Activity {
 	@Override
@@ -24,6 +25,9 @@ public abstract class MenuActivity extends Activity {
 		case R.id.menu_all_courses:
 			openAllCourses();
 			break;
+		case R.id.menu_timetable:
+			openTimetable();
+			break;
 		}
 		return true;
 	}
@@ -35,6 +39,11 @@ public abstract class MenuActivity extends Activity {
 
 	private void openAllCourses() {
 		Intent intent = new Intent(this, AllCoursesActivity.class);
+		startActivity(intent);
+	}
+
+	private void openTimetable() {
+		Intent intent = new Intent(this, TimetableActivity.class);
 		startActivity(intent);
 	}
 }

@@ -8,5 +8,9 @@
         android:id="@+id/menu_all_courses"
         android:title="@string/all_courses">
     </item>
+    <item
+        android:id="@+id/menu_timetable"
+        android:title="@string/my_timetable">
+    </item>
 
 </menu>
