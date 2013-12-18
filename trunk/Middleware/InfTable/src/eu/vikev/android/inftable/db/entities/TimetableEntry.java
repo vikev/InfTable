@@ -1,14 +1,14 @@
 package eu.vikev.android.inftable.db.entities;
 
-import eu.vikev.android.inftable.custom.Time;
+import eu.vikev.android.inftable.custom.MyTime;
 
 public class TimetableEntry {
 	private Long id;
 	private Course course;
 	private String semester;
 	private String day;
-	private Time start;
-	private Time end;
+	private MyTime start;
+	private MyTime end;
 	private Building building;
 	private String buildingName;
 	private Room room;
@@ -47,19 +47,19 @@ public class TimetableEntry {
 		this.day = day;
 	}
 
-	public Time getStart() {
+	public MyTime getStart() {
 		return start;
 	}
 
-	public void setStart(Time start) {
+	public void setStart(MyTime start) {
 		this.start = start;
 	}
 
-	public Time getEnd() {
+	public MyTime getEnd() {
 		return end;
 	}
 
-	public void setEnd(Time end) {
+	public void setEnd(MyTime end) {
 		this.end = end;
 	}
 

@@ -10,7 +10,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import eu.vikev.android.inftable.custom.Time;
+import eu.vikev.android.inftable.custom.MyTime;
 import eu.vikev.android.inftable.db.DBHelper;
 import eu.vikev.android.inftable.db.MyCoursesTable;
 import eu.vikev.android.inftable.db.TimetableTable;
@@ -51,11 +51,11 @@ public class TimetableDao {
 		timetableEntry.setDay(cursor.getString(3));
 
 		int startTime = cursor.getInt(4);
-		Time start = new Time(startTime / 100, startTime % 100);
+		MyTime start = new MyTime(startTime / 100, startTime % 100);
 		timetableEntry.setStart(start);
 
 		int endTime = cursor.getInt(5);
-		Time end = new Time(endTime / 100, endTime % 100);
+		MyTime end = new MyTime(endTime / 100, endTime % 100);
 		timetableEntry.setEnd(end);
 
 		String buildingName = cursor.getString(6);
@@ -169,9 +169,27 @@ public class TimetableDao {
 	 *            Should be 1 or 2
 	 * @param day
 	 *            Should be one of the day codes of {@link java.util.Calendar}.
+	 * 
 	 * @return List with times of lectures in that day ordered by time.
 	 */
-	public List<TimetableEntry> getMyTimetableForDay(int sem, int day) {
+	public List<TimetableEntry> getMyTimetableForDay(int sem, int day){
+		return getMyTimetableForDay(sem, day, 0);
+	}
+
+	/**
+	 * Get the timetable for a specific day and semester
+	 * 
+	 * @param sem
+	 *            Should be 1 or 2
+	 * @param day
+	 *            Should be one of the day codes of {@link java.util.Calendar}.
+	 * 
+	 * @param afterHour
+	 *            Select courses starting after this time
+	 * @return List with times of lectures in that day ordered by time.
+	 */
+	public List<TimetableEntry> getMyTimetableForDay(int sem, int day,
+			int afterHour) {
 		List<TimetableEntry> entries = new ArrayList<TimetableEntry>();
 		String selection = TimetableTable.COLUMN_SEMESTER + "=" + sem;
 		String selectDay = "UPPER(" + TimetableTable.COLUMN_DAY + ")='";
@@ -199,7 +217,8 @@ public class TimetableDao {
 		try {
 			this.open();
 			String query = "SELECT * FROM " + TimetableTable.TABLE_NAME
-					+ " WHERE course IN (SELECT course FROM "
+					+ " WHERE start > " + afterHour
+					+ " AND course IN (SELECT course FROM "
 					+ MyCoursesTable.TABLE_NAME + ") AND " + selection
 					+ " ORDER BY " + ORDER;
 

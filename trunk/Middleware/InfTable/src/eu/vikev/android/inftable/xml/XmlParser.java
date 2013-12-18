@@ -25,7 +25,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import eu.vikev.android.inftable.R;
 import eu.vikev.android.inftable.activities.MainActivity;
-import eu.vikev.android.inftable.custom.Time;
+import eu.vikev.android.inftable.custom.MyTime;
 import eu.vikev.android.inftable.db.entities.Building;
 import eu.vikev.android.inftable.db.entities.Course;
 import eu.vikev.android.inftable.db.entities.Room;
@@ -368,7 +368,7 @@ public class XmlParser extends AsyncTask<String, Void, Boolean> {
 
 				/* Insert this entry */
 				timetableDao.insert(acronym, semesterNum, day,
-						new Time(start).toInt(), new Time(finish).toInt(),
+						new MyTime(start).toInt(), new MyTime(finish).toInt(),
 						building, room, comment);
 			}
 

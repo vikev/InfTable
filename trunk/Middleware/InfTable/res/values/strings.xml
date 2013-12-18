@@ -7,8 +7,6 @@
 
     <string name="app_name">InfTable</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="update_world">Update world!</string>
     <string name="label_path_to_courses">Please enter the path to courses.xml</string>
     <string name="link_courses_xml">http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml</string>
     <string name="label_path_to_venues">Please enter the path to venues.xml</string>
@@ -64,5 +62,5 @@
     <string name="my_courses_subtitle">See and remove courses</string>
     <string name="label_update_database">Update database</string>
     <string name="label_update_database_subtitle">Update courses, timetables and venues</string>
-    
+    <string name="label_next_class">My next class:</string>
 </resources>

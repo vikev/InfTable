@@ -17,6 +17,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import eu.vikev.android.inftable.MenuActivity;
 import eu.vikev.android.inftable.R;
+import eu.vikev.android.inftable.custom.MyTime;
 import eu.vikev.android.inftable.db.entities.Building;
 import eu.vikev.android.inftable.db.entities.Room;
 import eu.vikev.android.inftable.db.entities.TimetableEntry;
@@ -65,25 +66,21 @@ public class TimetableActivity extends MenuActivity {
 		tabHost.addTab(spec4);
 		tabHost.addTab(spec5);
 
-		// Calendar magic
-		Calendar calendar = Calendar.getInstance();
-		day = calendar.get(Calendar.DAY_OF_WEEK);
-		if (day > Calendar.FRIDAY) {
-			day = Calendar.MONDAY;
-		}
+		day = MyTime.CURRENT_DAY();
 		selectedDay = day;
 
 		tabHost.setCurrentTab(day - Calendar.MONDAY);
 
-		int month = calendar.get(Calendar.MONTH);
-		if (month >= Calendar.JULY) {
-			semester = 1;
+		semester = MyTime.CURRENT_SEMESTER();
+		switch (semester) {
+		case 1:
 			RadioButton btn = (RadioButton) findViewById(R.id.radioButton_semester1);
 			btn.setChecked(true);
-		} else {
-			semester = 2;
-			RadioButton btn = (RadioButton) findViewById(R.id.radioButton_semester2);
-			btn.setChecked(true);
+			break;
+		case 2:
+			RadioButton btn2 = (RadioButton) findViewById(R.id.radioButton_semester2);
+			btn2.setChecked(true);
+			break;
 		}
 
 		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
@@ -183,7 +180,6 @@ public class TimetableActivity extends MenuActivity {
 			} else {
 				courseAndLocation += entry.getRoomName();
 			}
-
 
 			if (!"".equals(entry.getComment())) {
 				courseAndLocation += "<br/>&nbsp;&nbsp;&nbsp;"
