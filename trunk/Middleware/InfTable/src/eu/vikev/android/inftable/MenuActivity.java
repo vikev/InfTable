@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import eu.vikev.android.inftable.activities.AllCoursesActivity;
 import eu.vikev.android.inftable.activities.MainActivity;
+import eu.vikev.android.inftable.activities.MyCoursesActivity;
 import eu.vikev.android.inftable.activities.TimetableActivity;
 
 /**
@@ -31,8 +32,15 @@ public abstract class MenuActivity extends Activity {
 		case R.id.menu_timetable:
 			openTimetable();
 			break;
+		case R.id.menu_my_courses:
+			openMyCourses();
 		}
 		return true;
+	}
+
+	private void openMyCourses() {
+		Intent intent = new Intent(this, MyCoursesActivity.class);
+		startActivity(intent);
 	}
 
 	private void openHome() {
