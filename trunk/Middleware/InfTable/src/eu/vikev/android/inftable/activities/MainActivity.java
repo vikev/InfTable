@@ -1,5 +1,6 @@
 package eu.vikev.android.inftable.activities;
 
+import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
@@ -40,11 +41,16 @@ public class MainActivity extends Activity {
 	}
 
 	private void getNextLecture() {
+		int day = MyTime.CURRENT_DAY();
+		TextView tv = (TextView) findViewById(R.id.textView_next_class);
+		if (day != Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+			/* It's weekend! */
+			tv.setText("No classes in the weekend!");
+		} else {
 		List<TimetableEntry> entries = timetableDao.getMyTimetableForDay(
-				MyTime.CURRENT_SEMESTER(), MyTime.CURRENT_DAY(),
+					MyTime.CURRENT_SEMESTER(), day,
 				MyTime.CURRENT_TIME());
 
-		TextView tv = (TextView) findViewById(R.id.textView_next_class);
 		if (entries.size() == 0) {
 			tv.setText("No more classes today!");
 		} else {
@@ -76,6 +82,7 @@ public class MainActivity extends Activity {
 			}
 			tv.setText(Html.fromHtml(courseAndLocation));
 			tv.setMovementMethod(LinkMovementMethod.getInstance());
+			}
 		}
 
 	}
