@@ -51,7 +51,7 @@ public class DbUpdateDao {
 		Log.i(DbUpdateDao.class.getName(), "Removing obsolate my courses...");
 		try {
 			this.open();
-			String where = MyCoursesTable.COLUMN_COURSE + "NOT IN (SELECT "
+			String where = MyCoursesTable.COLUMN_COURSE + " NOT IN (SELECT "
 					+ CoursesTable.COLUMN_ACRONYM + " AS "
 					+ MyCoursesTable.COLUMN_COURSE + " FROM "
 					+ CoursesTable.TABLE_NAME + ")";
